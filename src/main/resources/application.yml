@@ -1,7 +1,7 @@
 server:
   port: 8080
   servlet:
-    contextPath: /WatchlistAPI/1.0.0
+    contextPath: /MovieWatchlistAPI/1.0.0
 
 spring:
   jackson:
