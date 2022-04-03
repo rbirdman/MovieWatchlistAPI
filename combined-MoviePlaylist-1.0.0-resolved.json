@@ -28,15 +28,15 @@
       "description": "APIs that revolve around the watchlist"
     },
     {
-      "name": "AuthenticationApi",
+      "name": "Authentication",
       "description": "APIs for logging in and out of the API"
     },
     {
-      "name": "UsersApi",
+      "name": "Users",
       "description": "APIs for creating new users"
     },
     {
-      "name": "MediaApi",
+      "name": "Media",
       "description": "APIs for searching media"
     }
   ],
@@ -252,26 +252,23 @@
         }
       }
     },
-    "/api/auth/token": {
+    "/auth/token": {
       "post": {
         "tags": [
-          "AuthenticationApi"
+          "Authentication"
         ],
+        "summary": "Login to MovieWatchlistAPI",
+        "description": "User passes in basic credentials in exchange for access token upon successful authentication",
         "responses": {
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TokenCredentials"
                 }
               },
-              "text/json": {
+              "application/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/TokenCredentials"
                 }
@@ -290,28 +287,13 @@
       },
       "delete": {
         "tags": [
-          "AuthenticationApi"
+          "Authentication"
         ],
+        "summary": "Invalidate access token",
+        "description": "Invalidates the access token passed in the Authentication header",
         "responses": {
           "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TokenCredentials"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TokenCredentials"
-                }
-              }
-            }
+            "description": "Success"
           },
           "401": {
             "description": "Unauthorized"
@@ -324,38 +306,23 @@
         ]
       }
     },
-    "/api/users": {
+    "/users": {
       "get": {
         "tags": [
-          "UsersApi"
+          "Users"
         ],
-        "parameters": [
-          {
-            "name": "query",
-            "in": "query",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "summary": "Get list of users",
+        "description": "Get a list of registered users",
         "responses": {
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserDetails"
-                }
-              },
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/UserDetails"
                 }
               },
-              "text/json": {
+              "application/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/UserDetails"
                 }
@@ -366,21 +333,18 @@
       },
       "post": {
         "tags": [
-          "UsersApi"
+          "Users"
         ],
+        "summary": "Create new user",
+        "description": "Register new user to the API",
         "requestBody": {
           "content": {
-            "text/plain": {
-              "schema": {
-                "$ref": "#/components/schemas/UserCredentials"
-              }
-            },
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/UserCredentials"
               }
             },
-            "text/json": {
+            "application/xml": {
               "schema": {
                 "$ref": "#/components/schemas/UserCredentials"
               }
@@ -394,11 +358,13 @@
         }
       }
     },
-    "/api/media": {
+    "/media": {
       "get": {
         "tags": [
-          "MediaApi"
+          "Media"
         ],
+        "summary": "Search the IMDB database",
+        "description": "Pass in a query string to get a list of media to add to your watchlist",
         "parameters": [
           {
             "name": "query",
@@ -415,17 +381,12 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/SearchData"
-                }
-              },
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SearchData"
                 }
               },
-              "text/json": {
+              "application/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/SearchData"
                 }
@@ -440,11 +401,13 @@
         ]
       }
     },
-    "/api/media/{mediaId}": {
+    "/media/{mediaId}": {
       "get": {
         "tags": [
-          "MediaApi"
+          "Media"
         ],
+        "summary": "Get metadata about specific media",
+        "description": "Get additional metadata regarding a specific media by ID",
         "parameters": [
           {
             "name": "mediaId",
@@ -461,17 +424,12 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TitleData"
-                }
-              },
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TitleData"
                 }
               },
-              "text/json": {
+              "application/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/TitleData"
                 }
@@ -486,11 +444,13 @@
         ]
       }
     },
-    "/api/media/{mediaId}/ratings": {
+    "/media/{mediaId}/ratings": {
       "post": {
         "tags": [
-          "MediaApi"
+          "Media"
         ],
+        "summary": "Update the ratings for the provided media",
+        "description": "Rate the media item on a scale of 1 to 5 stars",
         "parameters": [
           {
             "name": "mediaId",
@@ -505,17 +465,12 @@
         ],
         "requestBody": {
           "content": {
-            "text/plain": {
-              "schema": {
-                "$ref": "#/components/schemas/UserRating"
-              }
-            },
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/UserRating"
               }
             },
-            "text/json": {
+            "application/xml": {
               "schema": {
                 "$ref": "#/components/schemas/UserRating"
               }
@@ -585,28 +540,34 @@
         }
       },
       "ActorShort": {
+        "name": "ActorShort",
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "example": "nm0306201"
           },
           "image": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "example": "https://imdb-api.com/images/original/MV5BMTUyNTkxODIxN15BMl5BanBnXkFtZTgwOTU2MDAwMTE@._V1_Ratio1.0000_AL_.jpg"
           },
           "name": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "example": "Jorge Garcia"
           },
           "asCharacter": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "example": "Hugo 'Hurley"
           }
         },
         "additionalProperties": false
       },
       "KeyValueItem": {
+        "name": "KeyValueItem",
         "type": "object",
         "properties": {
           "key": {
@@ -621,6 +582,7 @@
         "additionalProperties": false
       },
       "SearchData": {
+        "name": "SearchData",
         "required": [
           "expression",
           "searchType"
@@ -628,10 +590,12 @@
         "type": "object",
         "properties": {
           "searchType": {
-            "type": "string"
+            "type": "string",
+            "example": "Title"
           },
           "expression": {
-            "type": "string"
+            "type": "string",
+            "example": "Frozen"
           },
           "results": {
             "type": "array",
@@ -642,43 +606,52 @@
           },
           "errorMessage": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "example": ""
           }
         },
         "additionalProperties": false
       },
       "SearchResult": {
+        "name": "SearchResult",
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "example": "tt123456"
           },
           "resultType": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "example": "Title"
           },
           "image": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "example": "https://imdb-api.com/images/original/MV5BMjI0NTQ4MzgxMl5BMl5BanBnXkFtZTcwMzI1MzU2Nw@@._V1_Ratio1.0714_AL_.jpg"
           },
           "title": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "example": "Frozen"
           },
           "description": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "example": "When the newly crowned Queen Elsa accidentally uses her power to turn things into ice to curse her home in infinite winter, her sister Anna teams up with a mountain man, his playful reindeer, and a snowman to change the weather condition."
           }
         },
         "additionalProperties": false
       },
       "TitleData": {
+        "name": "TitleData",
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "example": "tt0411008"
           },
           "ratings": {
             "type": "array",
@@ -689,43 +662,53 @@
           },
           "title": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "example": "Lost"
           },
           "originalTitle": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "example": ""
           },
           "fullTitle": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "example": "Lost (TV Series 2004–2010)"
           },
           "type": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "example": "TVSeries"
           },
           "year": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "example": "2004"
           },
           "image": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "example": "https://imdb-api.com/images/original/MV5BNzhlY2E5NDUtYjJjYy00ODg3LWFkZWQtYTVmMzU4ZWZmOWJkXkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_Ratio0.6751_AL_.jpg"
           },
           "releaseDate": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "example": "2004-09-22"
           },
           "runtimeMins": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "example": null
           },
           "runtimeStr": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "example": null
           },
           "plot": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "example": "The past, present, and future lives of surviving Oceanic Flight 815 passengers are dramatically intertwined as a fight for survival ensues in a quest for answers after crashlanding on a mysterious island. Each discovery prompts yet more secrets, as the hastily-formed colony search for a way off the island, or is this their home?"
           },
           "actorList": {
             "type": "array",
@@ -736,7 +719,8 @@
           },
           "genres": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "example": "Adventure, Drama, Fantasy"
           },
           "genreList": {
             "type": "array",
@@ -749,6 +733,7 @@
         "additionalProperties": false
       },
       "UserDetails": {
+        "name": "UserDetails",
         "required": [
           "email",
           "id",
@@ -769,6 +754,7 @@
         }
       },
       "UserCredentials": {
+        "name":"UserCredentials",
         "required": [
           "email",
           "password",
@@ -788,12 +774,12 @@
           },
           "password": {
             "type": "string",
-            "format": "email",
-            "example": "JohnSmith123@jh.edu"
+            "example": "Password123"
           }
         }
       },
       "TokenCredentials": {
+        "name": "TokenCredentials",
         "required": [
           "accessToken"
         ],
@@ -807,15 +793,14 @@
         }
       },
       "UserRating": {
+        "name": "UserRating",
         "type": "object",
         "properties": {
-          "userId": {
-            "type": "string"
-          },
           "rating": {
             "maximum": 5,
-            "minimum": 0,
-            "type": "integer"
+            "minimum": 1,
+            "type": "integer",
+            "example": 4
           }
         }
       }
