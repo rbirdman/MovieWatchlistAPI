@@ -1,63 +1,64 @@
-package io.swagger.model;
+package io.swagger.model.media;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
+
 import javax.validation.constraints.*;
 
 /**
- * KeyValueItem
+ * MediaItem
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-04-02T22:43:09.213512-04:00[America/New_York]")
 
 
-public class KeyValueItem   {
-  @JsonProperty("key")
-  private String key = null;
+public class MediaItem   {
+  @JsonProperty("id")
+  private Integer id = null;
 
-  @JsonProperty("value")
-  private String value = null;
+  @JsonProperty("name")
+  private String name = null;
 
-  public KeyValueItem key(String key) {
-    this.key = key;
+  public MediaItem id(Integer id) {
+    this.id = id;
     return this;
   }
 
   /**
-   * Get key
-   * @return key
+   * Get id
+   * @return id
    **/
-  @Schema(description = "")
-  
-    public String getKey() {
-    return key;
+  @Schema(example = "5", required = true, description = "")
+      @NotNull
+
+    public Integer getId() {
+    return id;
   }
 
-  public void setKey(String key) {
-    this.key = key;
+  public void setId(Integer id) {
+    this.id = id;
   }
 
-  public KeyValueItem value(String value) {
-    this.value = value;
+  public MediaItem name(String name) {
+    this.name = name;
     return this;
   }
 
   /**
-   * Get value
-   * @return value
+   * Get name
+   * @return name
    **/
-  @Schema(description = "")
-  
-    public String getValue() {
-    return value;
+  @Schema(example = "The Good Doctor", required = true, description = "")
+      @NotNull
+
+    public String getName() {
+    return name;
   }
 
-  public void setValue(String value) {
-    this.value = value;
+  public void setName(String name) {
+    this.name = name;
   }
 
 
@@ -69,23 +70,23 @@ public class KeyValueItem   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    KeyValueItem keyValueItem = (KeyValueItem) o;
-    return Objects.equals(this.key, keyValueItem.key) &&
-        Objects.equals(this.value, keyValueItem.value);
+    MediaItem mediaItem = (MediaItem) o;
+    return Objects.equals(this.id, mediaItem.id) &&
+        Objects.equals(this.name, mediaItem.name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(key, value);
+    return Objects.hash(id, name);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class KeyValueItem {\n");
+    sb.append("class MediaItem {\n");
     
-    sb.append("    key: ").append(toIndentedString(key)).append("\n");
-    sb.append("    value: ").append(toIndentedString(value)).append("\n");
+    sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("}");
     return sb.toString();
   }

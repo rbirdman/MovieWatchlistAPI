@@ -1,8 +1,7 @@
-package io.swagger.model;
+package io.swagger.model.users;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.UUID;
 import org.springframework.validation.annotation.Validated;
@@ -10,41 +9,44 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * UserDetails
+ * UserCredentials
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-04-02T22:43:09.213512-04:00[America/New_York]")
 
 
-public class UserDetails   {
-  @JsonProperty("id")
-  private UUID id = null;
+public class UserCredentials   {
+  @JsonProperty("username")
+  private UUID username = null;
 
   @JsonProperty("email")
   private String email = null;
 
-  public UserDetails id(UUID id) {
-    this.id = id;
+  @JsonProperty("password")
+  private String password = null;
+
+  public UserCredentials username(UUID username) {
+    this.username = username;
     return this;
   }
 
   /**
-   * Get id
-   * @return id
+   * Get username
+   * @return username
    **/
   @Schema(example = "d290f1ee-6c54-4b01-90e6-d701748f0851", required = true, description = "")
       @NotNull
 
     @Valid
-    public UUID getId() {
-    return id;
+    public UUID getUsername() {
+    return username;
   }
 
-  public void setId(UUID id) {
-    this.id = id;
+  public void setUsername(UUID username) {
+    this.username = username;
   }
 
-  public UserDetails email(String email) {
+  public UserCredentials email(String email) {
     this.email = email;
     return this;
   }
@@ -64,6 +66,26 @@ public class UserDetails   {
     this.email = email;
   }
 
+  public UserCredentials password(String password) {
+    this.password = password;
+    return this;
+  }
+
+  /**
+   * Get password
+   * @return password
+   **/
+  @Schema(example = "Password123", required = true, description = "")
+      @NotNull
+
+    public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -73,23 +95,25 @@ public class UserDetails   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    UserDetails userDetails = (UserDetails) o;
-    return Objects.equals(this.id, userDetails.id) &&
-        Objects.equals(this.email, userDetails.email);
+    UserCredentials userCredentials = (UserCredentials) o;
+    return Objects.equals(this.username, userCredentials.username) &&
+        Objects.equals(this.email, userCredentials.email) &&
+        Objects.equals(this.password, userCredentials.password);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, email);
+    return Objects.hash(username, email, password);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class UserDetails {\n");
+    sb.append("class UserCredentials {\n");
     
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("    username: ").append(toIndentedString(username)).append("\n");
     sb.append("    email: ").append(toIndentedString(email)).append("\n");
+    sb.append("    password: ").append(toIndentedString(password)).append("\n");
     sb.append("}");
     return sb.toString();
   }
