@@ -252,7 +252,7 @@
         }
       }
     },
-    "/api/auth/token": {
+    "/auth/token": {
       "post": {
         "tags": [
           "Authentication"
@@ -306,25 +306,13 @@
         ]
       }
     },
-    "/api/users": {
+    "/users": {
       "get": {
         "tags": [
           "Users"
         ],
         "summary": "Get list of users",
         "description": "Get a list of registered users",
-        "parameters": [
-          {
-            "name": "query",
-            "in": "query",
-            "required": true,
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -370,7 +358,7 @@
         }
       }
     },
-    "/api/media": {
+    "/media": {
       "get": {
         "tags": [
           "Media"
@@ -413,7 +401,7 @@
         ]
       }
     },
-    "/api/media/{mediaId}": {
+    "/media/{mediaId}": {
       "get": {
         "tags": [
           "Media"
@@ -456,7 +444,7 @@
         ]
       }
     },
-    "/api/media/{mediaId}/ratings": {
+    "/media/{mediaId}/ratings": {
       "post": {
         "tags": [
           "Media"

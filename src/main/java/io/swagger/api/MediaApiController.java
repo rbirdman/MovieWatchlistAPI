@@ -2,9 +2,6 @@ package io.swagger.api;
 
 import io.swagger.model.SearchData;
 import io.swagger.model.TitleData;
-import io.swagger.model.TokenCredentials;
-import io.swagger.model.UserCredentials;
-import io.swagger.model.UserDetails;
 import io.swagger.model.UserRating;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,42 +34,23 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-04-02T22:29:35.803425-04:00[America/New_York]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-04-02T22:43:09.213512-04:00[America/New_York]")
 @RestController
-public class ApiApiController implements ApiApi {
+public class MediaApiController implements MediaApi {
 
-    private static final Logger log = LoggerFactory.getLogger(ApiApiController.class);
+    private static final Logger log = LoggerFactory.getLogger(MediaApiController.class);
 
     private final ObjectMapper objectMapper;
 
     private final HttpServletRequest request;
 
     @org.springframework.beans.factory.annotation.Autowired
-    public ApiApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+    public MediaApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
     }
 
-    public ResponseEntity<Void> apiAuthTokenDelete() {
-        String accept = request.getHeader("Accept");
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
-    public ResponseEntity<TokenCredentials> apiAuthTokenPost() {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<TokenCredentials>(objectMapper.readValue("{\n  \"accessToken\" : \"Bearer ey122asd...\"\n}", TokenCredentials.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<TokenCredentials>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<TokenCredentials>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
-    public ResponseEntity<SearchData> apiMediaGet(@NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "query", required = true) String query) {
+    public ResponseEntity<SearchData> mediaGet(@NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "query", required = true) String query) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
@@ -86,7 +64,7 @@ public class ApiApiController implements ApiApi {
         return new ResponseEntity<SearchData>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<TitleData> apiMediaMediaIdGet(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("mediaId") String mediaId) {
+    public ResponseEntity<TitleData> mediaMediaIdGet(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("mediaId") String mediaId) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
@@ -100,26 +78,7 @@ public class ApiApiController implements ApiApi {
         return new ResponseEntity<TitleData>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<Void> apiMediaMediaIdRatingsPost(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("mediaId") String mediaId,@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody UserRating body) {
-        String accept = request.getHeader("Accept");
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
-    public ResponseEntity<UserDetails> apiUsersGet(@NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "query", required = true) String query) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<UserDetails>(objectMapper.readValue("{\n  \"id\" : \"d290f1ee-6c54-4b01-90e6-d701748f0851\",\n  \"email\" : \"JohnSmith123@jh.edu\"\n}", UserDetails.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<UserDetails>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<UserDetails>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
-    public ResponseEntity<Void> apiUsersPost(@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody UserCredentials body) {
+    public ResponseEntity<Void> mediaMediaIdRatingsPost(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("mediaId") String mediaId,@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody UserRating body) {
         String accept = request.getHeader("Accept");
         return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
     }
