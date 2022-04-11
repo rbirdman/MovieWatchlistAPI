@@ -19,12 +19,12 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final MovieUserDetailsService movieUserDetailsService;
-    private final JwtUtil jwtUtil;
+    private final JwtService jwtService;
 
     @Autowired
-    public JwtFilter(MovieUserDetailsService movieUserDetailsService, JwtUtil jwtUtil) {
+    public JwtFilter(MovieUserDetailsService movieUserDetailsService, JwtService jwtService) {
         this.movieUserDetailsService = movieUserDetailsService;
-        this.jwtUtil = jwtUtil;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid JWT Token in Bearer Header");
             } else {
                 try{
-                    String email = jwtUtil.validateTokenAndRetrieveSubject(jwt);
+                    String email = jwtService.validateTokenAndRetrieveSubject(jwt);
                     UserDetails userDetails = movieUserDetailsService.loadUserByUsername(email);
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(email, userDetails.getPassword(), userDetails.getAuthorities());

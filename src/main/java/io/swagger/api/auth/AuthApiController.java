@@ -5,7 +5,7 @@ import io.swagger.entity.users.User;
 import io.swagger.model.auth.TokenCredentials;
 import io.swagger.model.users.UserCredentials;
 import io.swagger.repository.UserRepository;
-import io.swagger.security.JwtUtil;
+import io.swagger.security.JwtService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,16 +35,16 @@ public class AuthApiController implements AuthApi {
 
     private final HttpServletRequest request;
 
-    private final JwtUtil jwtUtil;
+    private final JwtService jwtService;
     private final AuthenticationManager authManager;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AuthApiController(ObjectMapper objectMapper, HttpServletRequest request, JwtUtil jwtUtil, AuthenticationManager authManager, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthApiController(ObjectMapper objectMapper, HttpServletRequest request, JwtService jwtService, AuthenticationManager authManager, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.objectMapper = objectMapper;
         this.request = request;
-        this.jwtUtil = jwtUtil;
+        this.jwtService = jwtService;
         this.authManager = authManager;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -58,10 +58,7 @@ public class AuthApiController implements AuthApi {
         }
         try {
             String bearerToken = org.apache.commons.lang3.StringUtils.removeStart(authHeader, "Bearer").trim();
-            Authentication authentication = new UsernamePasswordAuthenticationToken(bearerToken, bearerToken);
-
-            // TODO: Implementation TBD
-
+            jwtService.invalidateToken(bearerToken);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             e.printStackTrace();
@@ -83,7 +80,7 @@ public class AuthApiController implements AuthApi {
                     userCredentials.getPassword());
 
             Authentication authentication = authManager.authenticate(authInputToken);
-            String token = jwtUtil.generateToken(authentication);
+            String token = jwtService.generateToken(authentication);
 
             return ResponseEntity.ok().body(new TokenCredentials().accessToken(token));
         } catch (Exception e) {
