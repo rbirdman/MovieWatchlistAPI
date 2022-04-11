@@ -3,14 +3,31 @@ server:
   servlet:
     contextPath: /MovieWatchlistAPI/1.0.0
 
+app:
+  admin-policy:
+    admin-users: fli34@jh.edu,rbird5@jh.edu
+    admin-secret: 3%MXC<+fDbqdgVW
+  security:
+    jwtSecret: KtYxPmVMbnP%MgyG=53#=%3JjEQq!H4r
+
 spring:
   jackson:
     date-format: io.swagger.RFC3339DateFormat
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
+  datasource:
+    url: jdbc:h2:file:~/movieWatchlistDB;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE
+    username: admin
+    password: password
+    driverClassName: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
 
 springfox:
   documentation:
     open-api:
       v3:
-        path: =/api-docs
+        path: /api-docs
+

@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.0",
+  "openapi": "3.0.3",
   "info": {
     "title": "Movie Watchlist API",
     "description": "This is a movie watchlist API where users can add or remove titles from their watchlist, as well as provide ratings.",
@@ -14,269 +14,105 @@
   },
   "servers": [
     {
-      "url": "https://virtserver.swaggerhub.com/rbird5JHU/MoviePlaylist/1.0.0",
-      "description": "SwaggerHub API Auto Mocking"
-    },
-    {
-      "url": "https://virtserver.swaggerhub.com/service-apis5/FinalProject/1.0.0",
-      "description": "SwaggerHub API Auto Mocking"
+      "url": "http://localhost:8080",
+      "description": "Inferred Url"
     }
   ],
   "tags": [
     {
-      "name": "Watchlist",
-      "description": "APIs that revolve around the watchlist"
+      "name": "auth-api-controller",
+      "description": "Auth Api Controller"
     },
     {
-      "name": "Authentication",
-      "description": "APIs for logging in and out of the API"
+      "name": "media-api-controller",
+      "description": "Media Api Controller"
     },
     {
-      "name": "Users",
-      "description": "APIs for creating new users"
+      "name": "users-api-controller",
+      "description": "Users Api Controller"
     },
     {
-      "name": "Media",
-      "description": "APIs for searching media"
+      "name": "watchlist-api-controller",
+      "description": "Watchlist Api Controller"
     }
   ],
   "paths": {
-    "/watchlist": {
+    "/MovieWatchlistAPI/1.0.0/auth/register": {
       "post": {
         "tags": [
-          "Watchlist"
+          "Authentication"
         ],
-        "summary": "Creates a new Watchlist for the calling user",
-        "description": "Creates a new Watchlist for the calling user\n",
-        "responses": {
-          "201": {
-            "description": "item created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Watchlist"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/Watchlist"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/watchlist/{watchlist_id}": {
-      "get": {
-        "tags": [
-          "Watchlist"
-        ],
-        "summary": "Retrieve Watchlist",
-        "description": "Gets an existing watchlist for the calling user if watchlist exists and the user has permissions to view the Watchlist.\n",
-        "parameters": [
-          {
-            "name": "watchlist_id",
-            "in": "path",
-            "description": "The id of the watchlist to retrieve",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Item retrieved",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Watchlist"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/Watchlist"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Watchlist not found for user"
-          }
-        }
-      }
-    },
-    "/watchlist/{watchlist_id}/media": {
-      "post": {
-        "tags": [
-          "Watchlist"
-        ],
-        "summary": "Adds Media",
-        "description": "Adds a media object to the watchlist\n",
-        "parameters": [
-          {
-            "name": "watchlist_id",
-            "in": "path",
-            "description": "The id of the watchlist to retrieve",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
+        "summary": "Register new user",
+        "description": "Register new user to the API",
+        "operationId": "userRegistrationUsingPOST",
         "requestBody": {
-          "description": "Media data to add to watchlist",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MediaItem"
+                "$ref": "#/components/schemas/UserCredentials"
               }
             },
             "application/xml": {
               "schema": {
-                "$ref": "#/components/schemas/MediaItem"
+                "$ref": "#/components/schemas/UserCredentials"
               }
             }
           }
         },
         "responses": {
+          "200": {
+            "description": "OK"
+          },
           "201": {
-            "description": "item created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Watchlist"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/Watchlist"
-                }
-              }
-            }
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           },
           "404": {
-            "description": "Watchlist not found for user"
+            "description": "Not Found"
           }
         }
       }
     },
-    "/watchlist/{watchlist_id}/visibility": {
-      "put": {
-        "tags": [
-          "Watchlist"
-        ],
-        "summary": "Set Visibility",
-        "description": "Sets the IsPublic attribute for the watchlist\n",
-        "parameters": [
-          {
-            "name": "watchlist_id",
-            "in": "path",
-            "description": "The id of the watchlist to retrieve",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "requestBody": {
-          "$ref": "#/components/requestBodies/VisibilityRequest"
-        },
-        "responses": {
-          "200": {
-            "description": "Watchlist updated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Watchlist"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/Watchlist"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Watchlist not found for user"
-          }
-        }
-      }
-    },
-    "/watchlist/{watchlist_id}/media/{media_id}": {
-      "delete": {
-        "tags": [
-          "Watchlist"
-        ],
-        "summary": "Set Visibility",
-        "description": "Sets the IsPublic attribute for the watchlist\n",
-        "parameters": [
-          {
-            "name": "watchlist_id",
-            "in": "path",
-            "description": "The id of the watchlist to retrieve",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "media_id",
-            "in": "path",
-            "description": "The id of the media to delete",
-            "required": true,
-            "style": "simple",
-            "explode": false,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Media deleted from Watchlist"
-          },
-          "404": {
-            "description": "Watchlist or Media not found for user"
-          }
-        }
-      }
-    },
-    "/auth/token": {
+    "/MovieWatchlistAPI/1.0.0/auth/token": {
       "post": {
         "tags": [
           "Authentication"
         ],
         "summary": "Login to MovieWatchlistAPI",
         "description": "User passes in basic credentials in exchange for access token upon successful authentication",
+        "operationId": "authTokenPostUsingPOST",
         "responses": {
           "200": {
             "description": "Success",
             "content": {
-              "application/json": {
+              "application/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/TokenCredentials"
                 }
               },
-              "application/xml": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TokenCredentials"
                 }
               }
             }
           },
+          "201": {
+            "description": "Created"
+          },
           "401": {
             "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
           }
         },
         "security": [
@@ -291,12 +127,19 @@
         ],
         "summary": "Invalidate access token",
         "description": "Invalidates the access token passed in the Authentication header",
+        "operationId": "authTokenDeleteUsingDELETE",
         "responses": {
           "200": {
             "description": "Success"
           },
+          "204": {
+            "description": "No Content"
+          },
           "401": {
             "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
         },
         "security": [
@@ -306,72 +149,21 @@
         ]
       }
     },
-    "/users": {
-      "get": {
-        "tags": [
-          "Users"
-        ],
-        "summary": "Get list of users",
-        "description": "Get a list of registered users",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserDetails"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserDetails"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Users"
-        ],
-        "summary": "Create new user",
-        "description": "Register new user to the API",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UserCredentials"
-              }
-            },
-            "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/UserCredentials"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/media": {
+    "/MovieWatchlistAPI/1.0.0/media": {
       "get": {
         "tags": [
           "Media"
         ],
         "summary": "Search the IMDB database",
         "description": "Pass in a query string to get a list of media to add to your watchlist",
+        "operationId": "mediaGetUsingGET",
         "parameters": [
           {
             "name": "query",
             "in": "query",
+            "description": "query",
             "required": true,
             "style": "form",
-            "explode": true,
             "schema": {
               "type": "string"
             }
@@ -381,17 +173,26 @@
           "200": {
             "description": "Success",
             "content": {
-              "application/json": {
+              "application/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/SearchData"
                 }
               },
-              "application/xml": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SearchData"
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
           }
         },
         "security": [
@@ -401,20 +202,21 @@
         ]
       }
     },
-    "/media/{mediaId}": {
+    "/MovieWatchlistAPI/1.0.0/media/{mediaId}": {
       "get": {
         "tags": [
           "Media"
         ],
         "summary": "Get metadata about specific media",
         "description": "Get additional metadata regarding a specific media by ID",
+        "operationId": "mediaMediaIdGetUsingGET",
         "parameters": [
           {
             "name": "mediaId",
             "in": "path",
+            "description": "mediaId",
             "required": true,
             "style": "simple",
-            "explode": false,
             "schema": {
               "type": "string"
             }
@@ -424,17 +226,26 @@
           "200": {
             "description": "Success",
             "content": {
-              "application/json": {
+              "application/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/TitleData"
                 }
               },
-              "application/xml": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TitleData"
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
           }
         },
         "security": [
@@ -444,20 +255,21 @@
         ]
       }
     },
-    "/media/{mediaId}/ratings": {
+    "/MovieWatchlistAPI/1.0.0/media/{mediaId}/ratings": {
       "post": {
         "tags": [
           "Media"
         ],
         "summary": "Update the ratings for the provided media",
         "description": "Rate the media item on a scale of 1 to 5 stars",
+        "operationId": "mediaMediaIdRatingsPostUsingPOST",
         "parameters": [
           {
             "name": "mediaId",
             "in": "path",
+            "description": "mediaId",
             "required": true,
             "style": "simple",
-            "explode": false,
             "schema": {
               "type": "string"
             }
@@ -478,8 +290,20 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK"
+          },
           "201": {
             "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
           }
         },
         "security": [
@@ -488,11 +312,370 @@
           }
         ]
       }
+    },
+    "/MovieWatchlistAPI/1.0.0/users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get list of users",
+        "description": "Get a list of registered users",
+        "operationId": "usersGetUsingGET",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserDetails"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/MovieWatchlistAPI/1.0.0/watchlist": {
+      "post": {
+        "tags": [
+          "Watchlist"
+        ],
+        "summary": "Creates a new Watchlist for the calling user",
+        "description": "Creates a new Watchlist for the calling user ",
+        "operationId": "watchlistPostUsingPOST",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/Watchlist"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Watchlist"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "item created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Watchlist"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/MovieWatchlistAPI/1.0.0/watchlist/{watchlist_id}": {
+      "get": {
+        "tags": [
+          "Watchlist"
+        ],
+        "summary": "Retrieve Watchlist",
+        "description": "Gets an existing watchlist for the calling user if watchlist exists and the user has permissions to view the Watchlist. ",
+        "operationId": "watchlistWatchlistIdGetUsingGET",
+        "parameters": [
+          {
+            "name": "watchlist_id",
+            "in": "path",
+            "description": "The id of the watchlist to retrieve",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item retrieved",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/Watchlist"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Watchlist"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Watchlist not found for user"
+          }
+        }
+      }
+    },
+    "/MovieWatchlistAPI/1.0.0/watchlist/{watchlist_id}/media": {
+      "post": {
+        "tags": [
+          "Watchlist"
+        ],
+        "summary": "Adds Media",
+        "description": "Adds a media object to the watchlist ",
+        "operationId": "watchlistWatchlistIdMediaPostUsingPOST",
+        "parameters": [
+          {
+            "name": "watchlist_id",
+            "in": "path",
+            "description": "The id of the watchlist to retrieve",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MediaItem"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/MediaItem"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/Watchlist"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Watchlist"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "item created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Watchlist"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Watchlist not found for user"
+          }
+        }
+      }
+    },
+    "/MovieWatchlistAPI/1.0.0/watchlist/{watchlist_id}/media/{media_id}": {
+      "delete": {
+        "tags": [
+          "Watchlist"
+        ],
+        "summary": "Set Visibility",
+        "description": "Sets the IsPublic attribute for the watchlist ",
+        "operationId": "watchlistWatchlistIdMediaMediaIdDeleteUsingDELETE",
+        "parameters": [
+          {
+            "name": "watchlist_id",
+            "in": "path",
+            "description": "The id of the watchlist to retrieve",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "media_id",
+            "in": "path",
+            "description": "The id of the media to delete",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Media deleted from Watchlist"
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Watchlist or Media not found for user"
+          }
+        }
+      }
+    },
+    "/MovieWatchlistAPI/1.0.0/watchlist/{watchlist_id}/visibility": {
+      "put": {
+        "tags": [
+          "Watchlist"
+        ],
+        "summary": "Set Visibility",
+        "description": "Sets the IsPublic attribute for the watchlist ",
+        "operationId": "watchlistWatchlistIdVisibilityPutUsingPUT",
+        "parameters": [
+          {
+            "name": "watchlist_id",
+            "in": "path",
+            "description": "The id of the watchlist to retrieve",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Watchlist updated",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/Watchlist"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Watchlist"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Watchlist not found for user"
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "ActorShort": {
+        "title": "ActorShort",
+        "type": "object",
+        "properties": {
+          "asCharacter": {
+            "type": "string",
+            "example": "Hugo 'Hurley"
+          },
+          "id": {
+            "type": "string",
+            "example": "nm0306201"
+          },
+          "image": {
+            "type": "string",
+            "example": "https://imdb-api.com/images/original/MV5BMTUyNTkxODIxN15BMl5BanBnXkFtZTgwOTU2MDAwMTE@._V1_Ratio1.0000_AL_.jpg"
+          },
+          "name": {
+            "type": "string",
+            "example": "Jorge Garcia"
+          }
+        }
+      },
+      "KeyValueItem": {
+        "title": "KeyValueItem",
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
       "MediaItem": {
+        "title": "MediaItem",
         "required": [
           "id",
           "name"
@@ -501,7 +684,7 @@
         "properties": {
           "id": {
             "type": "integer",
-            "format": "uint32",
+            "format": "int32",
             "example": 5
           },
           "name": {
@@ -510,7 +693,199 @@
           }
         }
       },
+      "SearchData": {
+        "title": "SearchData",
+        "required": [
+          "expression",
+          "searchType"
+        ],
+        "type": "object",
+        "properties": {
+          "errorMessage": {
+            "type": "string"
+          },
+          "expression": {
+            "type": "string",
+            "example": "Frozen"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SearchResult"
+            }
+          },
+          "searchType": {
+            "type": "string",
+            "example": "Title"
+          }
+        }
+      },
+      "SearchResult": {
+        "title": "SearchResult",
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "example": "When the newly crowned Queen Elsa accidentally uses her power to turn things into ice to curse her home in infinite winter, her sister Anna teams up with a mountain man, his playful reindeer, and a snowman to change the weather condition."
+          },
+          "id": {
+            "type": "string",
+            "example": "tt123456"
+          },
+          "image": {
+            "type": "string",
+            "example": "https://imdb-api.com/images/original/MV5BMjI0NTQ4MzgxMl5BMl5BanBnXkFtZTcwMzI1MzU2Nw@@._V1_Ratio1.0714_AL_.jpg"
+          },
+          "resultType": {
+            "type": "string",
+            "example": "Title"
+          },
+          "title": {
+            "type": "string",
+            "example": "Frozen"
+          }
+        }
+      },
+      "TitleData": {
+        "title": "TitleData",
+        "type": "object",
+        "properties": {
+          "actorList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ActorShort"
+            }
+          },
+          "fullTitle": {
+            "type": "string",
+            "example": "Lost (TV Series 2004–2010)"
+          },
+          "genreList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KeyValueItem"
+            }
+          },
+          "genres": {
+            "type": "string",
+            "example": "Adventure, Drama, Fantasy"
+          },
+          "id": {
+            "type": "string",
+            "example": "tt0411008"
+          },
+          "image": {
+            "type": "string",
+            "example": "https://imdb-api.com/images/original/MV5BNzhlY2E5NDUtYjJjYy00ODg3LWFkZWQtYTVmMzU4ZWZmOWJkXkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_Ratio0.6751_AL_.jpg"
+          },
+          "originalTitle": {
+            "type": "string"
+          },
+          "plot": {
+            "type": "string",
+            "example": "The past, present, and future lives of surviving Oceanic Flight 815 passengers are dramatically intertwined as a fight for survival ensues in a quest for answers after crashlanding on a mysterious island. Each discovery prompts yet more secrets, as the hastily-formed colony search for a way off the island, or is this their home?"
+          },
+          "ratings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserRating"
+            }
+          },
+          "releaseDate": {
+            "type": "string",
+            "example": "2004-09-22"
+          },
+          "runtimeMins": {
+            "type": "string"
+          },
+          "runtimeStr": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "example": "Lost"
+          },
+          "type": {
+            "type": "string",
+            "example": "TVSeries"
+          },
+          "year": {
+            "type": "string",
+            "example": "2004"
+          }
+        }
+      },
+      "TokenCredentials": {
+        "title": "TokenCredentials",
+        "required": [
+          "accessToken"
+        ],
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "example": "Bearer ey122asd..."
+          }
+        }
+      },
+      "UserCredentials": {
+        "title": "UserCredentials",
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "JohnSmith123@jh.edu"
+          },
+          "password": {
+            "type": "string",
+            "example": "Password123"
+          }
+        }
+      },
+      "UserDetails": {
+        "title": "UserDetails",
+        "required": [
+          "admin",
+          "email",
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "admin": {
+            "type": "boolean",
+            "example": true
+          },
+          "email": {
+            "type": "string",
+            "example": "JohnSmith123@jh.edu"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "isAdmin": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UserRating": {
+        "title": "UserRating",
+        "type": "object",
+        "properties": {
+          "rating": {
+            "type": "integer",
+            "format": "int32",
+            "example": 4
+          }
+        }
+      },
       "Watchlist": {
+        "title": "Watchlist",
         "required": [
           "id",
           "isPubliclyViewable",
@@ -521,335 +896,25 @@
         "properties": {
           "id": {
             "type": "integer",
+            "format": "int32",
             "example": 1
           },
           "isPubliclyViewable": {
             "type": "boolean",
             "example": true
           },
-          "ownerUserId": {
-            "type": "integer",
-            "example": 3
-          },
           "mediaItems": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/MediaItem"
             }
-          }
-        }
-      },
-      "ActorShort": {
-        "name": "ActorShort",
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "nullable": true,
-            "example": "nm0306201"
           },
-          "image": {
-            "type": "string",
-            "nullable": true,
-            "example": "https://imdb-api.com/images/original/MV5BMTUyNTkxODIxN15BMl5BanBnXkFtZTgwOTU2MDAwMTE@._V1_Ratio1.0000_AL_.jpg"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true,
-            "example": "Jorge Garcia"
-          },
-          "asCharacter": {
-            "type": "string",
-            "nullable": true,
-            "example": "Hugo 'Hurley"
-          }
-        },
-        "additionalProperties": false
-      },
-      "KeyValueItem": {
-        "name": "KeyValueItem",
-        "type": "object",
-        "properties": {
-          "key": {
-            "type": "string",
-            "nullable": true
-          },
-          "value": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "SearchData": {
-        "name": "SearchData",
-        "required": [
-          "expression",
-          "searchType"
-        ],
-        "type": "object",
-        "properties": {
-          "searchType": {
-            "type": "string",
-            "example": "Title"
-          },
-          "expression": {
-            "type": "string",
-            "example": "Frozen"
-          },
-          "results": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/SearchResult"
-            }
-          },
-          "errorMessage": {
-            "type": "string",
-            "nullable": true,
-            "example": ""
-          }
-        },
-        "additionalProperties": false
-      },
-      "SearchResult": {
-        "name": "SearchResult",
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "nullable": true,
-            "example": "tt123456"
-          },
-          "resultType": {
-            "type": "string",
-            "nullable": true,
-            "example": "Title"
-          },
-          "image": {
-            "type": "string",
-            "nullable": true,
-            "example": "https://imdb-api.com/images/original/MV5BMjI0NTQ4MzgxMl5BMl5BanBnXkFtZTcwMzI1MzU2Nw@@._V1_Ratio1.0714_AL_.jpg"
-          },
-          "title": {
-            "type": "string",
-            "nullable": true,
-            "example": "Frozen"
-          },
-          "description": {
-            "type": "string",
-            "nullable": true,
-            "example": "When the newly crowned Queen Elsa accidentally uses her power to turn things into ice to curse her home in infinite winter, her sister Anna teams up with a mountain man, his playful reindeer, and a snowman to change the weather condition."
-          }
-        },
-        "additionalProperties": false
-      },
-      "TitleData": {
-        "name": "TitleData",
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "nullable": true,
-            "example": "tt0411008"
-          },
-          "ratings": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/UserRating"
-            }
-          },
-          "title": {
-            "type": "string",
-            "nullable": true,
-            "example": "Lost"
-          },
-          "originalTitle": {
-            "type": "string",
-            "nullable": true,
-            "example": ""
-          },
-          "fullTitle": {
-            "type": "string",
-            "nullable": true,
-            "example": "Lost (TV Series 2004–2010)"
-          },
-          "type": {
-            "type": "string",
-            "nullable": true,
-            "example": "TVSeries"
-          },
-          "year": {
-            "type": "string",
-            "nullable": true,
-            "example": "2004"
-          },
-          "image": {
-            "type": "string",
-            "nullable": true,
-            "example": "https://imdb-api.com/images/original/MV5BNzhlY2E5NDUtYjJjYy00ODg3LWFkZWQtYTVmMzU4ZWZmOWJkXkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_Ratio0.6751_AL_.jpg"
-          },
-          "releaseDate": {
-            "type": "string",
-            "nullable": true,
-            "example": "2004-09-22"
-          },
-          "runtimeMins": {
-            "type": "string",
-            "nullable": true,
-            "example": null
-          },
-          "runtimeStr": {
-            "type": "string",
-            "nullable": true,
-            "example": null
-          },
-          "plot": {
-            "type": "string",
-            "nullable": true,
-            "example": "The past, present, and future lives of surviving Oceanic Flight 815 passengers are dramatically intertwined as a fight for survival ensues in a quest for answers after crashlanding on a mysterious island. Each discovery prompts yet more secrets, as the hastily-formed colony search for a way off the island, or is this their home?"
-          },
-          "actorList": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/ActorShort"
-            }
-          },
-          "genres": {
-            "type": "string",
-            "nullable": true,
-            "example": "Adventure, Drama, Fantasy"
-          },
-          "genreList": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/KeyValueItem"
-            }
-          }
-        },
-        "additionalProperties": false
-      },
-      "UserDetails": {
-        "name": "UserDetails",
-        "required": [
-          "email",
-          "id",
-          "username"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "example": "JohnSmith123@jh.edu"
-          }
-        }
-      },
-      "UserCredentials": {
-        "name":"UserCredentials",
-        "required": [
-          "email",
-          "password",
-          "username"
-        ],
-        "type": "object",
-        "properties": {
-          "username": {
-            "type": "string",
-            "format": "uuid",
-            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "example": "JohnSmith123@jh.edu"
-          },
-          "password": {
-            "type": "string",
-            "example": "Password123"
-          }
-        }
-      },
-      "TokenCredentials": {
-        "name": "TokenCredentials",
-        "required": [
-          "accessToken"
-        ],
-        "type": "object",
-        "properties": {
-          "accessToken": {
-            "type": "string",
-            "format": "token",
-            "example": "Bearer ey122asd..."
-          }
-        }
-      },
-      "UserRating": {
-        "name": "UserRating",
-        "type": "object",
-        "properties": {
-          "rating": {
-            "maximum": 5,
-            "minimum": 1,
+          "ownerUserId": {
             "type": "integer",
-            "example": 4
+            "format": "int32",
+            "example": 3
           }
         }
-      }
-    },
-    "requestBodies": {
-      "VisibilityRequest": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "required": [
-                "IsPublic"
-              ],
-              "type": "object",
-              "properties": {
-                "IsPublic": {
-                  "type": "boolean",
-                  "example": true
-                }
-              }
-            }
-          },
-          "application/xml": {
-            "schema": {
-              "required": [
-                "IsPublic"
-              ],
-              "type": "object",
-              "properties": {
-                "IsPublic": {
-                  "type": "boolean",
-                  "example": true
-                }
-              },
-              "xml": {
-                "name": "Visibility"
-              }
-            }
-          }
-        }
-      }
-    },
-    "securitySchemes": {
-      "basicAuth": {
-        "type": "http",
-        "scheme": "basic"
-      },
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
       }
     }
   }

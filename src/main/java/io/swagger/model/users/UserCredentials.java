@@ -1,12 +1,13 @@
 package io.swagger.model.users;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.UUID;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+
+import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 /**
  * UserCredentials
@@ -16,8 +17,6 @@ import javax.validation.constraints.*;
 
 
 public class UserCredentials   {
-  @JsonProperty("username")
-  private UUID username = null;
 
   @JsonProperty("email")
   private String email = null;
@@ -25,9 +24,19 @@ public class UserCredentials   {
   @JsonProperty("password")
   private String password = null;
 
-  public UserCredentials username(UUID username) {
-    this.username = username;
-    return this;
+  /**
+   * Create a user credentials object from a basic auth header string
+   * @param basicAuthHeader
+   * @return
+   * @throws ArrayIndexOutOfBoundsException
+   */
+  public static UserCredentials from(String basicAuthHeader) throws ArrayIndexOutOfBoundsException {
+    String encodedAuth = StringUtils.removeStart(basicAuthHeader, "Basic").trim();
+    String decodedAuth = new String(Base64.decodeBase64(encodedAuth));
+    String[] credentials = decodedAuth.split(":");
+    return new UserCredentials()
+            .email(credentials[0])
+            .password(credentials[1]);
   }
 
   /**
@@ -36,15 +45,6 @@ public class UserCredentials   {
    **/
   @Schema(example = "d290f1ee-6c54-4b01-90e6-d701748f0851", required = true, description = "")
       @NotNull
-
-    @Valid
-    public UUID getUsername() {
-    return username;
-  }
-
-  public void setUsername(UUID username) {
-    this.username = username;
-  }
 
   public UserCredentials email(String email) {
     this.email = email;
@@ -96,22 +96,20 @@ public class UserCredentials   {
       return false;
     }
     UserCredentials userCredentials = (UserCredentials) o;
-    return Objects.equals(this.username, userCredentials.username) &&
-        Objects.equals(this.email, userCredentials.email) &&
+    return Objects.equals(this.email, userCredentials.email) &&
         Objects.equals(this.password, userCredentials.password);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(username, email, password);
+    return Objects.hash(email, password);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class UserCredentials {\n");
-    
-    sb.append("    username: ").append(toIndentedString(username)).append("\n");
+
     sb.append("    email: ").append(toIndentedString(email)).append("\n");
     sb.append("    password: ").append(toIndentedString(password)).append("\n");
     sb.append("}");

@@ -1,12 +1,13 @@
 package io.swagger.model.users;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.UUID;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  * UserDetails
@@ -21,6 +22,9 @@ public class UserDetails   {
 
   @JsonProperty("email")
   private String email = null;
+
+  @JsonProperty("isAdmin")
+  private boolean isAdmin = false;
 
   public UserDetails id(UUID id) {
     this.id = id;
@@ -61,6 +65,26 @@ public class UserDetails   {
 
   public void setEmail(String email) {
     this.email = email;
+  }
+
+  public UserDetails admin(boolean isAdmin) {
+    this.isAdmin = isAdmin;
+    return this;
+  }
+
+  /**
+   * Get whether the user is admin
+   * @return true or false
+   **/
+  @Schema(example = "true", required = true, description = "")
+  @NotNull
+
+  public boolean isAdmin() {
+    return isAdmin;
+  }
+
+  public void setAdmin(boolean isAdmin) {
+    this.isAdmin = isAdmin;
   }
 
 

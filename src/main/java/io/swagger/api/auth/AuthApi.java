@@ -6,7 +6,10 @@
 package io.swagger.api.auth;
 
 import io.swagger.model.auth.TokenCredentials;
+import io.swagger.model.users.UserCredentials;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,8 +17,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import javax.validation.Valid;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-04-02T22:43:09.213512-04:00[America/New_York]")
 @Validated
@@ -42,6 +48,14 @@ public interface AuthApi {
         produces = { "application/json", "application/xml" }, 
         method = RequestMethod.POST)
     ResponseEntity<TokenCredentials> authTokenPost();
+
+    @Operation(summary = "Register new user", description = "Register new user to the API", tags={ "Authentication" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Success") })
+    @RequestMapping(value = "/auth/register",
+            consumes = { "application/json", "application/xml" },
+            method = RequestMethod.POST)
+    ResponseEntity<Void> userRegistration(@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody UserCredentials body);
 
 }
 
