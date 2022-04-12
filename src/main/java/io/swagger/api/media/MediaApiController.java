@@ -1,9 +1,11 @@
 package io.swagger.api.media;
 
+import io.swagger.entity.media.MediaInfo;
 import io.swagger.model.media.SearchData;
 import io.swagger.model.media.TitleData;
 import io.swagger.model.media.UserRating;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.service.MediaService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -31,16 +33,22 @@ public class MediaApiController implements MediaApi {
 
     private final HttpServletRequest request;
 
+    private final MediaService mediaService;
+
     @org.springframework.beans.factory.annotation.Autowired
-    public MediaApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+    public MediaApiController(ObjectMapper objectMapper, HttpServletRequest request, MediaService mediaService) {
         this.objectMapper = objectMapper;
         this.request = request;
+        this.mediaService = mediaService;
     }
 
     public ResponseEntity<SearchData> mediaGet(@NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "query", required = true) String query) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
+                // tt0461770 is the only existing test data (for now...)
+                MediaInfo mediaInfo = mediaService.GetMediaById("tt0461770");
+                System.out.println(mediaInfo);
                 return new ResponseEntity<SearchData>(objectMapper.readValue("{\n  \"expression\" : \"Frozen\",\n  \"searchType\" : \"Title\",\n  \"errorMessage\" : \"\",\n  \"results\" : [ {\n    \"image\" : \"https://imdb-api.com/images/original/MV5BMjI0NTQ4MzgxMl5BMl5BanBnXkFtZTcwMzI1MzU2Nw@@._V1_Ratio1.0714_AL_.jpg\",\n    \"description\" : \"When the newly crowned Queen Elsa accidentally uses her power to turn things into ice to curse her home in infinite winter, her sister Anna teams up with a mountain man, his playful reindeer, and a snowman to change the weather condition.\",\n    \"id\" : \"tt123456\",\n    \"title\" : \"Frozen\",\n    \"resultType\" : \"Title\"\n  }, {\n    \"image\" : \"https://imdb-api.com/images/original/MV5BMjI0NTQ4MzgxMl5BMl5BanBnXkFtZTcwMzI1MzU2Nw@@._V1_Ratio1.0714_AL_.jpg\",\n    \"description\" : \"When the newly crowned Queen Elsa accidentally uses her power to turn things into ice to curse her home in infinite winter, her sister Anna teams up with a mountain man, his playful reindeer, and a snowman to change the weather condition.\",\n    \"id\" : \"tt123456\",\n    \"title\" : \"Frozen\",\n    \"resultType\" : \"Title\"\n  } ]\n}", SearchData.class), HttpStatus.NOT_IMPLEMENTED);
             } catch (IOException e) {
                 log.error("Couldn't serialize response for content type application/json", e);

@@ -9,6 +9,7 @@ app:
     admin-secret: 3%MXC<+fDbqdgVW
   security:
     jwtSecret: KtYxPmVMbnP%MgyG=53#=%3JjEQq!H4r
+    imdbApiKey: k_xqmbvnn2
 
 spring:
   jackson:
@@ -20,6 +21,7 @@ spring:
     username: admin
     password: password
     driverClassName: org.h2.Driver
+    initialization-mode: always
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
