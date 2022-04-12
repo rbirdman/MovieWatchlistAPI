@@ -12,9 +12,5 @@ import javax.annotation.PostConstruct;
 @Configuration
 public class APIServiceConfiguration {
 
-    @Bean
-    public MediaService mediaService() {
-        return new MediaService();
-    }
 
 }

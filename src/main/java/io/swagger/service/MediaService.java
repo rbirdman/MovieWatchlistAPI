@@ -3,11 +3,13 @@ package io.swagger.service;
 import io.swagger.entity.media.MediaInfo;
 import io.swagger.repository.MediaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 // The service will fetch data from imdb API if data does not already
 // exist in local database
+@Service
 public class MediaService {
 
     @Autowired
