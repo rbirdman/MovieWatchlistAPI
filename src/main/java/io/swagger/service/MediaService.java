@@ -1,10 +1,15 @@
 package io.swagger.service;
 
 import io.swagger.entity.media.MediaInfo;
+import io.swagger.model.media.SearchData;
+import io.swagger.model.media.SearchResult;
+import io.swagger.model.media.TitleData;
 import io.swagger.repository.MediaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 // The service will fetch data from imdb API if data does not already
@@ -15,28 +20,47 @@ public class MediaService {
     @Autowired
     private MediaRepository mediaRepository;
 
+    @Autowired
+    private IMDBService imdbService;
 
-    public MediaInfo GetMediaById(String id) {
-        Optional<MediaInfo> mediaInfo = mediaRepository.findById(id);
-        if (mediaInfo.isPresent()) {
-            return mediaInfo.get();
+    private Map<String, TitleData> mediaCache = new HashMap<>();
+    private Map<String, SearchData> searchCache = new HashMap<>();
+
+    public TitleData GetMediaById(String id) {
+        //Optional<TitleData> mediaInfo = mediaRepository.findById(id);
+        //if (mediaInfo.isPresent()) {
+        //    return mediaInfo.get();
+        //}
+
+        TitleData imdbData = mediaCache.get(id);
+        if (imdbData == null) {
+            // Call real API in order to populate local cache
+            imdbData = imdbService.getMediaById(id);
+
+            if (imdbData != null) {
+                mediaCache.put(id, imdbData);
+            }
         }
 
-        // TODO: Call real API if not found in local database
+//        if (imdbData != null) {
+//            mediaRepository.save(imdbData);
+//        }
 
-        // TODO: Store API result in database to cache data and return
-        return null;
+        return imdbData;
     }
 
-    public MediaInfo GetMediaByTitle(String title) {
-        Optional<MediaInfo> mediaInfo = mediaRepository.findByTitle(title);
-        if (mediaInfo.isPresent()) {
-            return mediaInfo.get();
-        }
-        // TODO: Call real API if not found in local database
+    public SearchData GetMediaByTitle(String title) {
+        SearchData imdbData = searchCache.get(title);
+        if (imdbData == null) {
+            // Call real API in order to populate local cache
+            imdbData = imdbService.searchMediaByTitle(title);
 
-        // TODO: Store API result in database to cache data and return
-        return null;
+            if (imdbData != null) {
+                searchCache.put(title, imdbData);
+            }
+        }
+
+        return imdbData;
     }
 
 }
