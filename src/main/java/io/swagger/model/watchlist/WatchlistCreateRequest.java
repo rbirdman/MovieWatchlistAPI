@@ -1,28 +1,25 @@
 package io.swagger.model.watchlist;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.model.media.MediaItem;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
-import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-
 /**
- * Watchlist
+ * WatchlistCreateRequest
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-04-02T22:43:09.213512-04:00[America/New_York]")
 
 
-public class Watchlist   {
-  @JsonProperty("id")
-  private UUID id = null;
-
+public class WatchlistCreateRequest {
   @JsonProperty("isPubliclyViewable")
   private Boolean isPubliclyViewable = null;
 
@@ -33,27 +30,7 @@ public class Watchlist   {
   @Valid
   private List<MediaItem> mediaItems = new ArrayList<MediaItem>();
 
-  public Watchlist id(UUID id) {
-    this.id = id;
-    return this;
-  }
-
-  /**
-   * Get id
-   * @return id
-   **/
-  @Schema(example = "1", required = true, description = "")
-      @NotNull
-
-    public UUID getId() {
-    return id;
-  }
-
-  public void setId(UUID id) {
-    this.id = id;
-  }
-
-  public Watchlist isPubliclyViewable(Boolean isPubliclyViewable) {
+  public WatchlistCreateRequest isPubliclyViewable(Boolean isPubliclyViewable) {
     this.isPubliclyViewable = isPubliclyViewable;
     return this;
   }
@@ -73,7 +50,7 @@ public class Watchlist   {
     this.isPubliclyViewable = isPubliclyViewable;
   }
 
-  public Watchlist ownerUserId(UUID ownerUserId) {
+  public WatchlistCreateRequest ownerUserId(UUID ownerUserId) {
     this.ownerUserId = ownerUserId;
     return this;
   }
@@ -93,12 +70,12 @@ public class Watchlist   {
     this.ownerUserId = ownerUserId;
   }
 
-  public Watchlist mediaItems(List<MediaItem> mediaItems) {
+  public WatchlistCreateRequest mediaItems(List<MediaItem> mediaItems) {
     this.mediaItems = mediaItems;
     return this;
   }
 
-  public Watchlist addMediaItemsItem(MediaItem mediaItemsItem) {
+  public WatchlistCreateRequest addMediaItemsItem(MediaItem mediaItemsItem) {
     this.mediaItems.add(mediaItemsItem);
     return this;
   }
@@ -120,31 +97,29 @@ public class Watchlist   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Watchlist watchlist = (Watchlist) o;
-    return Objects.equals(this.id, watchlist.id) &&
-        Objects.equals(this.isPubliclyViewable, watchlist.isPubliclyViewable) &&
+    WatchlistCreateRequest watchlist = (WatchlistCreateRequest) o;
+    return Objects.equals(this.isPubliclyViewable, watchlist.isPubliclyViewable) &&
         Objects.equals(this.ownerUserId, watchlist.ownerUserId) &&
         Objects.equals(this.mediaItems, watchlist.mediaItems);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, isPubliclyViewable, ownerUserId, mediaItems);
+    return Objects.hash(isPubliclyViewable, ownerUserId, mediaItems);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Watchlist {\n");
+    sb.append("class WatchlistCreateRequest {\n");
     
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    isPubliclyViewable: ").append(toIndentedString(isPubliclyViewable)).append("\n");
     sb.append("    ownerUserId: ").append(toIndentedString(ownerUserId)).append("\n");
     sb.append("    mediaItems: ").append(toIndentedString(mediaItems)).append("\n");
@@ -156,7 +131,7 @@ public class Watchlist   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }
