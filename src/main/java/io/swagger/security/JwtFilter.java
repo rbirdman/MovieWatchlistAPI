@@ -44,6 +44,7 @@ public class JwtFilter extends OncePerRequestFilter {
                             new UsernamePasswordAuthenticationToken(email, userDetails.getPassword(), userDetails.getAuthorities());
                     if(SecurityContextHolder.getContext().getAuthentication() == null){
                         SecurityContextHolder.getContext().setAuthentication(authToken);
+                        SecurityContextHolder.getContext().setAuthentication(authToken);
                     }
                 }catch(JWTVerificationException exc){
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid JWT Token");

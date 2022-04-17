@@ -1,11 +1,12 @@
 package io.swagger.model.media;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import java.util.Objects;
 
 /**
  * UserRating
@@ -18,9 +19,12 @@ public class UserRating   {
   @JsonProperty("rating")
   private Integer rating = null;
 
-  public UserRating rating(Integer rating) {
+  @JsonProperty("email")
+  private String email = null;
+
+  public UserRating(Integer rating, String email) {
     this.rating = rating;
-    return this;
+    this.email = email;
   }
 
   /**
@@ -37,6 +41,20 @@ public class UserRating   {
 
   public void setRating(Integer rating) {
     this.rating = rating;
+  }
+
+  /**
+   * User email
+   * @return user email
+   **/
+  @Schema(example = "fli34@jh.edu", description = "")
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
   }
 
 

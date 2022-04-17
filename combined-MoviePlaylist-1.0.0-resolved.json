@@ -756,6 +756,10 @@
               "$ref": "#/components/schemas/ActorShort"
             }
           },
+          "averageRating": {
+            "type": "number",
+            "format": "double"
+          },
           "fullTitle": {
             "type": "string",
             "example": "Lost (TV Series 2004–2010)"
@@ -877,6 +881,10 @@
         "title": "UserRating",
         "type": "object",
         "properties": {
+          "email": {
+            "type": "string",
+            "example": "fli34@jh.edu"
+          },
           "rating": {
             "type": "integer",
             "format": "int32",

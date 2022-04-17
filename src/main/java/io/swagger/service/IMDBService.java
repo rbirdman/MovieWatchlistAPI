@@ -27,7 +27,7 @@ public class IMDBService {
 
         ResponseEntity<TitleData> response = restTemplate.getForEntity(url, TitleData.class);
 
-        if (response.getStatusCode() == HttpStatus.OK) {
+        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null && response.getBody().getId() != null) {
             return response.getBody();
         }
 

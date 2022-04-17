@@ -1,12 +1,13 @@
 package io.swagger.model.media;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
+import java.util.Objects;
 
 /**
  * TitleData
@@ -22,6 +23,9 @@ public class TitleData   {
   @JsonProperty("ratings")
   @Valid
   private List<UserRating> ratings = null;
+
+  @JsonProperty("averageRating")
+  private Double averageRating = null;
 
   @JsonProperty("title")
   private String title = null;
@@ -108,6 +112,20 @@ public class TitleData   {
 
   public void setRatings(List<UserRating> ratings) {
     this.ratings = ratings;
+  }
+
+  /**
+   * Get average rating
+   * @return averageRating
+   **/
+  @Schema(description = "")
+  @Valid
+  public Double getAverageRating() {
+    return averageRating;
+  }
+
+  public void setAverageRating(Double averageRating) {
+    this.averageRating = averageRating;
   }
 
   public TitleData title(String title) {
