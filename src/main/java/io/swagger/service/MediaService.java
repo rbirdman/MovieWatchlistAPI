@@ -1,66 +1,96 @@
 package io.swagger.service;
 
-import io.swagger.entity.media.MediaInfo;
+import io.swagger.entity.media.MediaRating;
 import io.swagger.model.media.SearchData;
-import io.swagger.model.media.SearchResult;
 import io.swagger.model.media.TitleData;
-import io.swagger.repository.MediaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.model.media.UserRating;
+import io.swagger.repository.ImdbCacheRepository;
+import io.swagger.repository.MediaRatingRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 // The service will fetch data from imdb API if data does not already
 // exist in local database
 @Service
 public class MediaService {
 
-    @Autowired
-    private MediaRepository mediaRepository;
+    private final MediaRatingRepository mediaRatingRepository;
 
-    @Autowired
-    private IMDBService imdbService;
+    private final ImdbCacheRepository imdbCacheRepository;
 
-    private Map<String, TitleData> mediaCache = new HashMap<>();
-    private Map<String, SearchData> searchCache = new HashMap<>();
+    private final IMDBService imdbService;
 
-    public TitleData GetMediaById(String id) {
-        //Optional<TitleData> mediaInfo = mediaRepository.findById(id);
-        //if (mediaInfo.isPresent()) {
-        //    return mediaInfo.get();
-        //}
+    public MediaService(MediaRatingRepository mediaRatingRepository, ImdbCacheRepository imdbCacheRepository, IMDBService imdbService) {
+        this.mediaRatingRepository = mediaRatingRepository;
+        this.imdbCacheRepository = imdbCacheRepository;
+        this.imdbService = imdbService;
+    }
 
-        TitleData imdbData = mediaCache.get(id);
+    public TitleData getMediaById(String id) {
+        TitleData imdbData = imdbCacheRepository.findByQueryAndReadValue(id, TitleData.class);
         if (imdbData == null) {
             // Call real API in order to populate local cache
             imdbData = imdbService.getMediaById(id);
 
             if (imdbData != null) {
-                mediaCache.put(id, imdbData);
+                imdbCacheRepository.cache(id, imdbData);
             }
+        } else {
+            System.out.println("Returning cached media");
         }
 
-//        if (imdbData != null) {
-//            mediaRepository.save(imdbData);
-//        }
+        // Retrieve associated ratings
+        if (imdbData != null) {
+            List<MediaRating> ratings = mediaRatingRepository.findAllRatingsForTitleId(id);
+            if (ratings != null && !ratings.isEmpty()) {
+                List<UserRating> userRatings = ratings.stream().map(mediaRating -> new UserRating(mediaRating.getRating(), mediaRating.getUserEmail())).collect(Collectors.toList());
+
+                Double averageRating = userRatings.stream()
+                        .mapToInt(UserRating::getRating)
+                        .summaryStatistics()
+                        .getAverage();
+
+                imdbData.setRatings(userRatings);
+                imdbData.setAverageRating(averageRating);
+            }
+        }
 
         return imdbData;
     }
 
-    public SearchData GetMediaByTitle(String title) {
-        SearchData imdbData = searchCache.get(title);
+    public SearchData getMediaByTitle(String title) {
+        SearchData imdbData = imdbCacheRepository.findByQueryAndReadValue(title, SearchData.class);
         if (imdbData == null) {
             // Call real API in order to populate local cache
             imdbData = imdbService.searchMediaByTitle(title);
 
             if (imdbData != null) {
-                searchCache.put(title, imdbData);
+                imdbCacheRepository.cache(title, imdbData);
             }
+        } else {
+            System.out.println("Returning cached media");
         }
 
         return imdbData;
+    }
+
+    public void rateMediaById(String titleId, int rating) {
+        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // Update or create a user rating
+        List<MediaRating> userRatingsForMedia = mediaRatingRepository.findAllRatingsForTitleIdAndUser(titleId,email);
+        MediaRating mediaRating = !userRatingsForMedia.isEmpty()
+            ? userRatingsForMedia.get(0)
+            : new MediaRating();
+
+        mediaRating.setTitleId(titleId);
+        mediaRating.setUserEmail(email);
+        mediaRating.setRating(rating);
+
+        mediaRatingRepository.save(mediaRating);
     }
 
 }
