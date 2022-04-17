@@ -67,7 +67,6 @@ public class AuthApiController implements AuthApi {
     }
 
     public ResponseEntity<TokenCredentials> authTokenPost() {
-        String accept = request.getHeader("Accept");
         String authHeader = request.getHeader("Authorization");
         if (StringUtils.isEmpty(authHeader)) {
             return new ResponseEntity("Request must provide email and password for basic authentication.",

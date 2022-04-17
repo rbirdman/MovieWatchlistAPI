@@ -40,19 +40,16 @@ public class MediaApiController implements MediaApi {
     }
 
     public ResponseEntity<SearchData> mediaGet(@NotNull @Parameter(in = ParameterIn.QUERY, description = "" ,required=true,schema=@Schema()) @Valid @RequestParam(value = "query", required = true) String query) {
-        String accept = request.getHeader("Accept");
         SearchData searchData = mediaService.getMediaByTitle(query);
         return ResponseEntity.ok(searchData);
     }
 
     public ResponseEntity<TitleData> mediaMediaIdGet(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("mediaId") String mediaId) {
-        String accept = request.getHeader("Accept");
         TitleData titleData = mediaService.getMediaById(mediaId);
         return ResponseEntity.ok(titleData);
     }
 
     public ResponseEntity<Void> mediaMediaIdRatingsPost(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("mediaId") String mediaId,@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody UserRating body) {
-        String accept = request.getHeader("Accept");
         if (mediaService.getMediaById(mediaId) != null) {
             mediaService.rateMediaById(mediaId, body.getRating());
             return ResponseEntity.ok().build();
