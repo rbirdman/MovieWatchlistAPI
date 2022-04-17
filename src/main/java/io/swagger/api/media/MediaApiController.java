@@ -46,7 +46,9 @@ public class MediaApiController implements MediaApi {
 
     public ResponseEntity<TitleData> mediaMediaIdGet(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("mediaId") String mediaId) {
         TitleData titleData = mediaService.getMediaById(mediaId);
-        return ResponseEntity.ok(titleData);
+        return titleData != null
+            ? ResponseEntity.ok(titleData)
+            : ResponseEntity.notFound().build();
     }
 
     public ResponseEntity<Void> mediaMediaIdRatingsPost(@Parameter(in = ParameterIn.PATH, description = "", required=true, schema=@Schema()) @PathVariable("mediaId") String mediaId,@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody UserRating body) {
