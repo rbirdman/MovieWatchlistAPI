@@ -12,6 +12,8 @@ import io.swagger.model.watchlist.WatchlistVisiblity;
 import io.swagger.repository.WatchlistMediaRepository;
 import io.swagger.repository.WatchlistRepository;
 import org.springframework.data.domain.Example;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,13 +29,16 @@ public class WatchlistService {
     private final WatchlistMediaRepository watchlistMediaRepository;
 
     private final MediaService mediaService;
+    private final MovieUserDetailsService movieUserDetailsService;
 
     public WatchlistService(WatchlistRepository watchlistRepository,
                             WatchlistMediaRepository watchlistMediaRepository,
-                            MediaService mediaService) {
+                            MediaService mediaService,
+                            MovieUserDetailsService movieUserDetailsService) {
         this.watchlistRepository = watchlistRepository;
         this.watchlistMediaRepository = watchlistMediaRepository;
         this.mediaService = mediaService;
+        this.movieUserDetailsService = movieUserDetailsService;
     }
 
     public Watchlist CreateWatchlist(WatchlistCreateRequest watchlistRequest) {
@@ -43,6 +48,11 @@ public class WatchlistService {
         watchlist.setOwnerUserId(watchlistRequest.getOwnerUserId());
         watchlist.setMediaItems(watchlistRequest.getMediaItems());
         watchlist.setIsPubliclyViewable(watchlistRequest.isIsPubliclyViewable());
+
+        UserDetails owningUser = movieUserDetailsService.loadUserById(watchlist.getOwnerUserId());
+        if (owningUser == null) {
+            throw new RuntimeException("Unknown UserId: " + watchlist.getOwnerUserId());
+        }
 
         WatchlistEntity watchlistEntity = ConvertWatchlistToEntity(watchlist);
 
@@ -67,6 +77,18 @@ public class WatchlistService {
             return null;
         }
 
+        // TODO: Validate calling user
+        WatchlistEntity watchlistEntity = entity.get();
+        if (!watchlistEntity.getIsPubliclyViewable()) {
+            // if not a public watchlist, validate calling user
+            UserDetails owningUser = movieUserDetailsService.loadUserById(watchlistEntity.getOwnerUserId());
+            String callingUser =  SecurityContextHolder.getContext().getAuthentication().getName();
+
+            if (!owningUser.getUsername().equals(callingUser)) {
+                return null;
+            }
+        }
+
         List<MediaItem> mediaItems = new ArrayList<>();
 
         // Get Media information for watchlist
@@ -78,7 +100,7 @@ public class WatchlistService {
             }
         }
 
-        return ConvertWatchlistFromEntity(entity.get(), mediaItems);
+        return ConvertWatchlistFromEntity(watchlistEntity, mediaItems);
     }
 
     public void RemoveMediaFromWatchlist(UUID watchlistId, String mediaId)
