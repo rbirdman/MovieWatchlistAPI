@@ -1,0 +1,526 @@
+{
+	"info": {
+		"_postman_id": "908a5915-2cc4-4374-8d2d-69754a04353f",
+		"name": "Media Watchlist",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Auth Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"pm.environment.set(\"authToken\", jsonData.accessToken);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "3%MXC<+fDbqdgVW",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "rbird5@jh.edu",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/MovieWatchlistAPI/1.0.0/auth/token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"MovieWatchlistAPI",
+						"1.0.0",
+						"auth",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Media By Id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{authToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/MovieWatchlistAPI/1.0.0/media/tt0461770",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"MovieWatchlistAPI",
+						"1.0.0",
+						"media",
+						"tt0461770"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Media By Query",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{authToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/MovieWatchlistAPI/1.0.0/media?query=tt0461770",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"MovieWatchlistAPI",
+						"1.0.0",
+						"media"
+					],
+					"query": [
+						{
+							"key": "query",
+							"value": "tt0461770"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Users",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{authToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/MovieWatchlistAPI/1.0.0/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"MovieWatchlistAPI",
+						"1.0.0",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Watchlist",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"pm.environment.set(\"lastCreatedWatchlistId\", jsonData.id);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{authToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"ownerUserId\": \"{{rbirdUserId}}\",\n    \"isPubliclyViewable\": true,\n    \"mediaItems\": [\n        { \"id\": \"tt0461770\"},\n        { \"name\": \"Frozen\"}\n    ]\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/MovieWatchlistAPI/1.0.0/watchlist",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"MovieWatchlistAPI",
+						"1.0.0",
+						"watchlist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Watchlist",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{authToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/MovieWatchlistAPI/1.0.0/watchlist/{{lastCreatedWatchlistId}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"MovieWatchlistAPI",
+						"1.0.0",
+						"watchlist",
+						"{{lastCreatedWatchlistId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Media to Watchlist By Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"pm.environment.set(\"lastCreatedWatchlistId\", jsonData.id);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{authToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"tt0120762\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/MovieWatchlistAPI/1.0.0/watchlist/{{lastCreatedWatchlistId}}/media",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"MovieWatchlistAPI",
+						"1.0.0",
+						"watchlist",
+						"{{lastCreatedWatchlistId}}",
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Media to Watchlist By Name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"pm.environment.set(\"lastCreatedWatchlistId\", jsonData.id);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{authToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Sleeping Beauty\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/MovieWatchlistAPI/1.0.0/watchlist/{{lastCreatedWatchlistId}}/media",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"MovieWatchlistAPI",
+						"1.0.0",
+						"watchlist",
+						"{{lastCreatedWatchlistId}}",
+						"media"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete MediaItem (Enchanted) From Watchlist",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{authToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/MovieWatchlistAPI/1.0.0/watchlist/{{lastCreatedWatchlistId}}/media/tt0461770",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"MovieWatchlistAPI",
+						"1.0.0",
+						"watchlist",
+						"{{lastCreatedWatchlistId}}",
+						"media",
+						"tt0461770"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Set Watchlist Visibility",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"pm.environment.set(\"lastCreatedWatchlistId\", jsonData.id);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{authToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"isPubliclyViewable\": false\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/MovieWatchlistAPI/1.0.0/watchlist/{{lastCreatedWatchlistId}}/visibility",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"MovieWatchlistAPI",
+						"1.0.0",
+						"watchlist",
+						"{{lastCreatedWatchlistId}}",
+						"visibility"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

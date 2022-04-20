@@ -7,6 +7,8 @@ package io.swagger.api.watchlist;
 
 import io.swagger.model.media.MediaItem;
 import io.swagger.model.watchlist.Watchlist;
+import io.swagger.model.watchlist.WatchlistCreateRequest;
+import io.swagger.model.watchlist.WatchlistVisiblity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
+import java.util.UUID;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-04-02T22:43:09.213512-04:00[America/New_York]")
 @Validated
@@ -33,7 +36,7 @@ public interface WatchlistApi {
     @RequestMapping(value = "/watchlist",
         produces = { "application/json", "application/xml" }, 
         method = RequestMethod.POST)
-    ResponseEntity<Watchlist> watchlistPost();
+    ResponseEntity<Watchlist> watchlistPost(@Parameter(in = ParameterIn.DEFAULT, description = "Watchlist to create", schema=@Schema()) @Valid @RequestBody WatchlistCreateRequest body);
 
 
     @Operation(summary = "Retrieve Watchlist", description = "Gets an existing watchlist for the calling user if watchlist exists and the user has permissions to view the Watchlist. ", tags={ "Watchlist" })
@@ -44,7 +47,7 @@ public interface WatchlistApi {
     @RequestMapping(value = "/watchlist/{watchlist_id}",
         produces = { "application/json", "application/xml" }, 
         method = RequestMethod.GET)
-    ResponseEntity<Watchlist> watchlistWatchlistIdGet(@Parameter(in = ParameterIn.PATH, description = "The id of the watchlist to retrieve", required=true, schema=@Schema()) @PathVariable("watchlist_id") Integer watchlistId);
+    ResponseEntity<Watchlist> watchlistWatchlistIdGet(@Parameter(in = ParameterIn.PATH, description = "The id of the watchlist to retrieve", required=true, schema=@Schema()) @PathVariable("watchlist_id") UUID watchlistId);
 
 
     @Operation(summary = "Set Visibility", description = "Sets the IsPublic attribute for the watchlist ", tags={ "Watchlist" })
@@ -54,7 +57,7 @@ public interface WatchlistApi {
         @ApiResponse(responseCode = "404", description = "Watchlist or Media not found for user") })
     @RequestMapping(value = "/watchlist/{watchlist_id}/media/{media_id}",
         method = RequestMethod.DELETE)
-    ResponseEntity<Void> watchlistWatchlistIdMediaMediaIdDelete(@Parameter(in = ParameterIn.PATH, description = "The id of the watchlist to retrieve", required=true, schema=@Schema()) @PathVariable("watchlist_id") Integer watchlistId, @Parameter(in = ParameterIn.PATH, description = "The id of the media to delete", required=true, schema=@Schema()) @PathVariable("media_id") Integer mediaId);
+    ResponseEntity<Void> watchlistWatchlistIdMediaMediaIdDelete(@Parameter(in = ParameterIn.PATH, description = "The id of the watchlist to retrieve", required=true, schema=@Schema()) @PathVariable("watchlist_id") UUID watchlistId, @Parameter(in = ParameterIn.PATH, description = "The id of the media to delete", required=true, schema=@Schema()) @PathVariable("media_id") String mediaId);
 
 
     @Operation(summary = "Adds Media", description = "Adds a media object to the watchlist ", tags={ "Watchlist" })
@@ -66,7 +69,7 @@ public interface WatchlistApi {
         produces = { "application/json", "application/xml" }, 
         consumes = { "application/json", "application/xml" }, 
         method = RequestMethod.POST)
-    ResponseEntity<Watchlist> watchlistWatchlistIdMediaPost(@Parameter(in = ParameterIn.PATH, description = "The id of the watchlist to retrieve", required=true, schema=@Schema()) @PathVariable("watchlist_id") Integer watchlistId, @Parameter(in = ParameterIn.DEFAULT, description = "Media data to add to watchlist", schema=@Schema()) @Valid @RequestBody MediaItem body);
+    ResponseEntity<Watchlist> watchlistWatchlistIdMediaPost(@Parameter(in = ParameterIn.PATH, description = "The id of the watchlist to retrieve", required=true, schema=@Schema()) @PathVariable("watchlist_id") UUID watchlistId, @Parameter(in = ParameterIn.DEFAULT, description = "Media data to add to watchlist", schema=@Schema()) @Valid @RequestBody MediaItem body);
 
 
     @Operation(summary = "Set Visibility", description = "Sets the IsPublic attribute for the watchlist ", tags={ "Watchlist" })
@@ -78,7 +81,7 @@ public interface WatchlistApi {
         produces = { "application/json", "application/xml" }, 
         consumes = { "application/json", "application/xml" }, 
         method = RequestMethod.PUT)
-    ResponseEntity<Watchlist> watchlistWatchlistIdVisibilityPut(@Parameter(in = ParameterIn.PATH, description = "The id of the watchlist to retrieve", required=true, schema=@Schema()) @PathVariable("watchlist_id") Integer watchlistId, @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody Object body);
+    ResponseEntity<Watchlist> watchlistWatchlistIdVisibilityPut(@Parameter(in = ParameterIn.PATH, description = "The id of the watchlist to retrieve", required=true, schema=@Schema()) @PathVariable("watchlist_id") UUID watchlistId, @Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody WatchlistVisiblity body);
 
 }
 

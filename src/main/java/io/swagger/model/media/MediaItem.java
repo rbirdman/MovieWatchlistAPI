@@ -16,12 +16,12 @@ import javax.validation.constraints.*;
 
 public class MediaItem   {
   @JsonProperty("id")
-  private Integer id = null;
+  private String id = null;
 
   @JsonProperty("name")
   private String name = null;
 
-  public MediaItem id(Integer id) {
+  public MediaItem id(String id) {
     this.id = id;
     return this;
   }
@@ -30,14 +30,13 @@ public class MediaItem   {
    * Get id
    * @return id
    **/
-  @Schema(example = "5", required = true, description = "")
-      @NotNull
+  @Schema(example = "5", required = false, description = "")
 
-    public Integer getId() {
+    public String getId() {
     return id;
   }
 
-  public void setId(Integer id) {
+  public void setId(String id) {
     this.id = id;
   }
 
@@ -50,8 +49,7 @@ public class MediaItem   {
    * Get name
    * @return name
    **/
-  @Schema(example = "The Good Doctor", required = true, description = "")
-      @NotNull
+  @Schema(example = "The Good Doctor", required = false, description = "")
 
     public String getName() {
     return name;

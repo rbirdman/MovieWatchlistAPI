@@ -3,6 +3,9 @@ package io.swagger.api.watchlist;
 import io.swagger.model.media.MediaItem;
 import io.swagger.model.watchlist.Watchlist;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.model.watchlist.WatchlistCreateRequest;
+import io.swagger.model.watchlist.WatchlistVisiblity;
+import io.swagger.service.WatchlistService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.net.URI;
+import java.util.UUID;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-04-02T22:43:09.213512-04:00[America/New_York]")
 @RestController
@@ -28,71 +33,56 @@ public class WatchlistApiController implements WatchlistApi {
 
     private final HttpServletRequest request;
 
+    private final WatchlistService watchlistService;
+
     @org.springframework.beans.factory.annotation.Autowired
-    public WatchlistApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+    public WatchlistApiController(ObjectMapper objectMapper, HttpServletRequest request, WatchlistService watchlistService) {
         this.objectMapper = objectMapper;
         this.request = request;
+        this.watchlistService = watchlistService;
     }
 
-    public ResponseEntity<Watchlist> watchlistPost() {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<Watchlist>(objectMapper.readValue("{\n  \"mediaItems\" : [ {\n    \"name\" : \"The Good Doctor\",\n    \"id\" : 5\n  }, {\n    \"name\" : \"The Good Doctor\",\n    \"id\" : 5\n  } ],\n  \"isPubliclyViewable\" : true,\n  \"ownerUserId\" : 3,\n  \"id\" : 1\n}", Watchlist.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Watchlist>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+    public ResponseEntity<Watchlist> watchlistPost(@Parameter(in = ParameterIn.DEFAULT, description = "Watchlist to create", schema=@Schema()) @Valid @RequestBody WatchlistCreateRequest body) {
+        Watchlist watchlist = watchlistService.CreateWatchlist(body);
+
+        // TODO: Add links for individual media items
+
+        return ResponseEntity.created(URI.create("/watchlist/" + watchlist.getId())).body(watchlist);
+    }
+
+    public ResponseEntity<Watchlist> watchlistWatchlistIdGet(@Parameter(in = ParameterIn.PATH, description = "The id of the watchlist to retrieve", required=true, schema=@Schema()) @PathVariable("watchlist_id") UUID watchlistId) {
+        Watchlist watchlist = watchlistService.GetWatchlistById(watchlistId);
+
+        if (watchlist == null) {
+            return ResponseEntity.notFound().build();
         }
 
-        return new ResponseEntity<Watchlist>(HttpStatus.NOT_IMPLEMENTED);
+        return ResponseEntity.ok(watchlist);
     }
 
-    public ResponseEntity<Watchlist> watchlistWatchlistIdGet(@Parameter(in = ParameterIn.PATH, description = "The id of the watchlist to retrieve", required=true, schema=@Schema()) @PathVariable("watchlist_id") Integer watchlistId) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<Watchlist>(objectMapper.readValue("{\n  \"mediaItems\" : [ {\n    \"name\" : \"The Good Doctor\",\n    \"id\" : 5\n  }, {\n    \"name\" : \"The Good Doctor\",\n    \"id\" : 5\n  } ],\n  \"isPubliclyViewable\" : true,\n  \"ownerUserId\" : 3,\n  \"id\" : 1\n}", Watchlist.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Watchlist>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+    public ResponseEntity<Void> watchlistWatchlistIdMediaMediaIdDelete(@Parameter(in = ParameterIn.PATH, description = "The id of the watchlist to retrieve", required=true, schema=@Schema()) @PathVariable("watchlist_id") UUID watchlistId,@Parameter(in = ParameterIn.PATH, description = "The id of the media to delete", required=true, schema=@Schema()) @PathVariable("media_id") String mediaId) {
+        watchlistService.RemoveMediaFromWatchlist(watchlistId, mediaId);
+        return ResponseEntity.ok().build();
+    }
+
+    public ResponseEntity<Watchlist> watchlistWatchlistIdMediaPost(@Parameter(in = ParameterIn.PATH, description = "The id of the watchlist to retrieve", required=true, schema=@Schema()) @PathVariable("watchlist_id") UUID watchlistId,@Parameter(in = ParameterIn.DEFAULT, description = "Media data to add to watchlist", schema=@Schema()) @Valid @RequestBody MediaItem body) {
+        Watchlist watchlist = watchlistService.AddMediaItemToWatchlist(watchlistId, body);
+
+        if (watchlist == null) {
+            return ResponseEntity.notFound().build();
         }
 
-        return new ResponseEntity<Watchlist>(HttpStatus.NOT_IMPLEMENTED);
+        return ResponseEntity.ok(watchlist);
     }
 
-    public ResponseEntity<Void> watchlistWatchlistIdMediaMediaIdDelete(@Parameter(in = ParameterIn.PATH, description = "The id of the watchlist to retrieve", required=true, schema=@Schema()) @PathVariable("watchlist_id") Integer watchlistId,@Parameter(in = ParameterIn.PATH, description = "The id of the media to delete", required=true, schema=@Schema()) @PathVariable("media_id") Integer mediaId) {
-        String accept = request.getHeader("Accept");
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
-    }
+    public ResponseEntity<Watchlist> watchlistWatchlistIdVisibilityPut(@Parameter(in = ParameterIn.PATH, description = "The id of the watchlist to retrieve", required=true, schema=@Schema()) @PathVariable("watchlist_id") UUID watchlistId,@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody WatchlistVisiblity body) {
+        Watchlist watchlist = watchlistService.SetWatchlistVisibility(watchlistId, body);
 
-    public ResponseEntity<Watchlist> watchlistWatchlistIdMediaPost(@Parameter(in = ParameterIn.PATH, description = "The id of the watchlist to retrieve", required=true, schema=@Schema()) @PathVariable("watchlist_id") Integer watchlistId,@Parameter(in = ParameterIn.DEFAULT, description = "Media data to add to watchlist", schema=@Schema()) @Valid @RequestBody MediaItem body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<Watchlist>(objectMapper.readValue("{\n  \"mediaItems\" : [ {\n    \"name\" : \"The Good Doctor\",\n    \"id\" : 5\n  }, {\n    \"name\" : \"The Good Doctor\",\n    \"id\" : 5\n  } ],\n  \"isPubliclyViewable\" : true,\n  \"ownerUserId\" : 3,\n  \"id\" : 1\n}", Watchlist.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Watchlist>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+        if (watchlist == null) {
+            return ResponseEntity.notFound().build();
         }
 
-        return new ResponseEntity<Watchlist>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
-    public ResponseEntity<Watchlist> watchlistWatchlistIdVisibilityPut(@Parameter(in = ParameterIn.PATH, description = "The id of the watchlist to retrieve", required=true, schema=@Schema()) @PathVariable("watchlist_id") Integer watchlistId,@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody Object body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<Watchlist>(objectMapper.readValue("{\n  \"mediaItems\" : [ {\n    \"name\" : \"The Good Doctor\",\n    \"id\" : 5\n  }, {\n    \"name\" : \"The Good Doctor\",\n    \"id\" : 5\n  } ],\n  \"isPubliclyViewable\" : true,\n  \"ownerUserId\" : 3,\n  \"id\" : 1\n}", Watchlist.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Watchlist>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<Watchlist>(HttpStatus.NOT_IMPLEMENTED);
+        return ResponseEntity.ok(watchlist);
     }
 
 }

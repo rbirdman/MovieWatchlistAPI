@@ -2,6 +2,7 @@ package io.swagger.service;
 
 import io.swagger.entity.media.MediaRating;
 import io.swagger.model.media.SearchData;
+import io.swagger.model.media.SearchResult;
 import io.swagger.model.media.TitleData;
 import io.swagger.model.media.UserRating;
 import io.swagger.repository.ImdbCacheRepository;
@@ -75,6 +76,22 @@ public class MediaService {
         }
 
         return imdbData;
+    }
+
+    // Centralized function for finding a specific title in a list
+    // of results
+    public SearchResult getSearchResultByTitle(String title) {
+        SearchData data = getMediaByTitle(title);
+
+        if (data == null) {
+            return null;
+        }
+
+        // find title that matches exactly ignoring case
+        return data.getResults().stream().
+                filter(result -> result.getTitle().equalsIgnoreCase(title))
+                .findFirst()
+                .orElse(null);
     }
 
     public void rateMediaById(String titleId, int rating) {
