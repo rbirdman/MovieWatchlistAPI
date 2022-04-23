@@ -1,9 +1,10 @@
 package io.swagger.service;
 
+import io.swagger.api.exceptions.ApiException;
+import io.swagger.api.exceptions.NotFoundException;
 import io.swagger.entity.watchlist.WatchlistEntity;
 import io.swagger.entity.watchlist.WatchlistMedia;
 import io.swagger.model.media.MediaItem;
-import io.swagger.model.media.SearchData;
 import io.swagger.model.media.SearchResult;
 import io.swagger.model.media.TitleData;
 import io.swagger.model.watchlist.Watchlist;
@@ -11,7 +12,6 @@ import io.swagger.model.watchlist.WatchlistCreateRequest;
 import io.swagger.model.watchlist.WatchlistVisiblity;
 import io.swagger.repository.WatchlistMediaRepository;
 import io.swagger.repository.WatchlistRepository;
-import org.springframework.data.domain.Example;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -41,8 +41,8 @@ public class WatchlistService {
         this.movieUserDetailsService = movieUserDetailsService;
     }
 
-    public Watchlist CreateWatchlist(WatchlistCreateRequest watchlistRequest) {
-        // TODO: Validate input data
+    public Watchlist CreateWatchlist(WatchlistCreateRequest watchlistRequest) throws NotFoundException {
+        ValidateWatchlistCreateRequest(watchlistRequest);
 
         Watchlist watchlist = new Watchlist();
         watchlist.setOwnerUserId(watchlistRequest.getOwnerUserId());
@@ -51,7 +51,7 @@ public class WatchlistService {
 
         UserDetails owningUser = movieUserDetailsService.loadUserById(watchlist.getOwnerUserId());
         if (owningUser == null) {
-            throw new RuntimeException("Unknown UserId: " + watchlist.getOwnerUserId());
+            throw new NotFoundException(404, "Unknown ownerUserId: " + watchlist.getOwnerUserId());
         }
 
         WatchlistEntity watchlistEntity = ConvertWatchlistToEntity(watchlist);
@@ -71,13 +71,30 @@ public class WatchlistService {
         return GetWatchlistById(savedEntity.getId());
     }
 
+    private void ValidateWatchlistCreateRequest(WatchlistCreateRequest watchlist)
+    {
+        if (watchlist == null) {
+            throw new ApiException(400, "Request not provided");
+        }
+        else if (watchlist.getOwnerUserId() == null) {
+            throw new ApiException(400, "ownerUserId not provided");
+        }
+        else if (watchlist.isIsPubliclyViewable() == null) {
+            throw new ApiException(400, "isPubliclyViewable not provided");
+        }
+
+        // media items is optional
+        if (watchlist.getMediaItems() == null) {
+            watchlist.setMediaItems(new ArrayList<>());
+        }
+    }
+
     public Watchlist GetWatchlistById(UUID id) {
         Optional<WatchlistEntity> entity = watchlistRepository.findById(id);
         if (!entity.isPresent()) {
-            return null;
+            throw new NotFoundException(404, "WatchlistId not found: " + id.toString());
         }
 
-        // TODO: Validate calling user
         WatchlistEntity watchlistEntity = entity.get();
         if (!watchlistEntity.getIsPubliclyViewable()) {
             // if not a public watchlist, validate calling user
@@ -85,7 +102,8 @@ public class WatchlistService {
             String callingUser =  SecurityContextHolder.getContext().getAuthentication().getName();
 
             if (!owningUser.getUsername().equals(callingUser)) {
-                return null;
+                // calling user does not have permission to view this watchlist
+                throw new NotFoundException(404, "WatchlistId not found: " + id.toString());
             }
         }
 
@@ -119,8 +137,7 @@ public class WatchlistService {
     {
         // Verify watchlist and media item exist
         if (!watchlistRepository.findById(watchlistId).isPresent()) {
-            // TODO: Handle properly to result in 404
-            throw new RuntimeException("Watchlist not found!");
+            throw new NotFoundException(404, "Watchlist not found: " + watchlistId);
         }
 
         ValidateMediaItemForInsertion(mediaItem);
@@ -131,8 +148,7 @@ public class WatchlistService {
 
         if (mediaItem.getId() != null) {
             if (mediaService.getMediaById(mediaItem.getId()) == null) {
-                // TODO: Handle exception for proper http code
-                throw new RuntimeException("Provided id does not match a movie title");
+                throw new ApiException(400, "Provided id does not match a movie title: " + mediaItem.getId());
             }
 
             watchlistMedia.setMediaId(mediaItem.getId());
@@ -141,8 +157,7 @@ public class WatchlistService {
             // Get the MediaId based on the movie name/title
             SearchResult result = mediaService.getSearchResultByTitle(mediaItem.getName());
             if (result == null || result.getId() == null) {
-                // TODO: Handle exception for proper http code
-                throw new RuntimeException("Provided movie title not found");
+                throw new ApiException(400, "Provided movie title not found: " + mediaItem.getName());
             }
 
             watchlistMedia.setMediaId(result.getId());
@@ -157,13 +172,13 @@ public class WatchlistService {
     public Watchlist SetWatchlistVisibility(UUID watchlistId, WatchlistVisiblity visibility)
     {
         if (visibility.isIsPubliclyViewable() == null) {
-            throw new RuntimeException("isPubliclyViewable parameter not provided");
+            throw new ApiException(400, "isPubliclyViewable parameter not provided");
         }
 
         Optional<WatchlistEntity> result = watchlistRepository.findById(watchlistId);
 
         if (!result.isPresent()) {
-            return null;
+            throw new NotFoundException(404, "WatchlistId not found: " + watchlistId.toString());
         }
 
         WatchlistEntity entity = result.get();
@@ -180,18 +195,18 @@ public class WatchlistService {
         String id = mediaItem.getId();
         String name = mediaItem.getName();
 
-        // TODO: Handle exceptions properly to result in 400
         if (id != null && name != null) {
-            throw new RuntimeException("Id and Name given. Choose one parameter to add to playlist");
+            String msg = String.format("Id and Name given. Choose one parameter to add to playlist - id: %s name: %s", id, name);
+            throw new ApiException(400, msg);
         }
         else if (id == null && name == null) {
-            throw new RuntimeException("Id nor Name were given in Request");
+            throw new ApiException(400, "Id nor Name were given in Request");
         }
         else if (id != null && id.isEmpty()) {
-            throw new RuntimeException("Id is empty");
+            throw new ApiException(400, "Id is empty");
         }
         else if (name != null && name.isEmpty()) {
-            throw new RuntimeException("Name is empty");
+            throw new ApiException(400, "Name is empty");
         }
 
     }
@@ -205,6 +220,10 @@ public class WatchlistService {
     }
 
     private List<WatchlistMedia> GetWatchlistMediaFromWatchlist(Watchlist entity) {
+        if (entity.getMediaItems() == null) {
+            return new ArrayList<>();
+        }
+
         return entity.getMediaItems().stream()
                 .map(mediaItem -> new WatchlistMedia(null, entity.getId(), mediaItem.getId()))
                 .collect(Collectors.toList());
