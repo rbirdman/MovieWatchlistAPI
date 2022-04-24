@@ -1,6 +1,8 @@
 package io.swagger.api.watchlist;
 
+import io.swagger.api.media.MediaApiController;
 import io.swagger.model.media.MediaItem;
+import io.swagger.model.media.SearchResult;
 import io.swagger.model.watchlist.Watchlist;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.model.watchlist.WatchlistCreateRequest;
@@ -22,6 +24,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URI;
 import java.util.UUID;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-04-02T22:43:09.213512-04:00[America/New_York]")
 @RestController
@@ -45,8 +50,7 @@ public class WatchlistApiController implements WatchlistApi {
     public ResponseEntity<Watchlist> watchlistPost(@Parameter(in = ParameterIn.DEFAULT, description = "Watchlist to create", schema=@Schema()) @Valid @RequestBody WatchlistCreateRequest body) {
         Watchlist watchlist = watchlistService.CreateWatchlist(body);
 
-        // TODO: Add links for individual media items
-
+        AddHateoasUrls(watchlist);
         return ResponseEntity.created(URI.create("/watchlist/" + watchlist.getId())).body(watchlist);
     }
 
@@ -57,6 +61,7 @@ public class WatchlistApiController implements WatchlistApi {
             return ResponseEntity.notFound().build();
         }
 
+        AddHateoasUrls(watchlist);
         return ResponseEntity.ok(watchlist);
     }
 
@@ -72,7 +77,8 @@ public class WatchlistApiController implements WatchlistApi {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(watchlist);
+        AddHateoasUrls(watchlist);
+        return ResponseEntity.created(URI.create("/watchlist/" + watchlist.getId())).body(watchlist);
     }
 
     public ResponseEntity<Watchlist> watchlistWatchlistIdVisibilityPut(@Parameter(in = ParameterIn.PATH, description = "The id of the watchlist to retrieve", required=true, schema=@Schema()) @PathVariable("watchlist_id") UUID watchlistId,@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody WatchlistVisiblity body) {
@@ -82,7 +88,18 @@ public class WatchlistApiController implements WatchlistApi {
             return ResponseEntity.notFound().build();
         }
 
+        AddHateoasUrls(watchlist);
         return ResponseEntity.ok(watchlist);
     }
 
+    private void AddHateoasUrls(Watchlist watchlist)
+    {
+        watchlist.add(linkTo(methodOn(WatchlistApiController.class).watchlistWatchlistIdGet(watchlist.getId())).withSelfRel());
+        watchlist.add(linkTo(methodOn(WatchlistApiController.class).watchlistWatchlistIdVisibilityPut(watchlist.getId(), new WatchlistVisiblity())).withRel("set-watchlist-visibility"));
+
+        for (MediaItem mediaItem : watchlist.getMediaItems()) {
+            mediaItem.add(linkTo(methodOn(MediaApiController.class).mediaMediaIdGet(mediaItem.getId())).withSelfRel());
+            mediaItem.add(linkTo(methodOn(WatchlistApiController.class).watchlistWatchlistIdMediaMediaIdDelete(watchlist.getId(), mediaItem.getId())).withRel("remove-from-watchlist"));
+        }
+    }
 }

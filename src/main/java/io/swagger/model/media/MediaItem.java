@@ -3,6 +3,7 @@ package io.swagger.model.media;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.hateoas.RepresentationModel;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.*;
@@ -14,7 +15,7 @@ import javax.validation.constraints.*;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-04-02T22:43:09.213512-04:00[America/New_York]")
 
 
-public class MediaItem   {
+public class MediaItem extends RepresentationModel<MediaItem> {
   @JsonProperty("id")
   private String id = null;
 
