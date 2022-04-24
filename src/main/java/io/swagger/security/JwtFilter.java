@@ -42,7 +42,7 @@ public class JwtFilter extends OncePerRequestFilter {
                     String email = jwtService.validateTokenAndRetrieveSubject(jwt);
                     UserDetails userDetails = movieUserDetailsService.loadUserByUsername(email);
                     UsernamePasswordAuthenticationToken authToken =
-                            new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
+                            new UsernamePasswordAuthenticationToken(email, userDetails.getPassword(), userDetails.getAuthorities());
                     if(SecurityContextHolder.getContext().getAuthentication() == null){
                         SecurityContextHolder.getContext().setAuthentication(authToken);
                     }

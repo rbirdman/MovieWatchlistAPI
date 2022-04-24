@@ -34,7 +34,7 @@ public class MovieUserDetailsService implements UserDetailsService {
         String role = user.get().isAdmin() ? "ROLE_ADMIN" : "ROLE_USER";
 
         return new org.springframework.security.core.userdetails.User(
-                user.get().getId().toString(),
+                email,
                 user.get().getPassword(),
                 Collections.singletonList(new SimpleGrantedAuthority(role)));
     }

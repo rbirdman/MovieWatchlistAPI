@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * TokenCredentials
@@ -19,8 +20,16 @@ public class TokenCredentials extends RepresentationModel<TokenCredentials> {
   @JsonProperty("accessToken")
   private String accessToken = null;
 
+  @JsonProperty("userId")
+  private UUID userId = null;
+
   public TokenCredentials accessToken(String accessToken) {
     this.accessToken = accessToken;
+    return this;
+  }
+
+  public TokenCredentials userId(UUID userId) {
+    this.userId = userId;
     return this;
   }
 
@@ -37,6 +46,21 @@ public class TokenCredentials extends RepresentationModel<TokenCredentials> {
 
   public void setAccessToken(String accessToken) {
     this.accessToken = accessToken;
+  }
+
+  /**
+   * Get userId
+   * @return userId
+   **/
+  @Schema(example = "71bc52d4-c3df-11ec-9d64-0242ac120002", required = true, description = "")
+  @NotNull
+
+  public UUID getUserId() {
+    return userId;
+  }
+
+  public void setUserId(UUID userId) {
+    this.userId = userId;
   }
 
 
