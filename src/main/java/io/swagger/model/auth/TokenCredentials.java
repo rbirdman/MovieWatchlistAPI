@@ -1,11 +1,12 @@
 package io.swagger.model.auth;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.hateoas.RepresentationModel;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 /**
  * TokenCredentials
@@ -14,7 +15,7 @@ import javax.validation.constraints.*;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-04-02T22:43:09.213512-04:00[America/New_York]")
 
 
-public class TokenCredentials   {
+public class TokenCredentials extends RepresentationModel<TokenCredentials> {
   @JsonProperty("accessToken")
   private String accessToken = null;
 
