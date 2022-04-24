@@ -1,9 +1,12 @@
 package io.swagger.api.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.api.media.MediaApiController;
+import io.swagger.api.watchlist.WatchlistApiController;
 import io.swagger.entity.users.User;
 import io.swagger.model.auth.TokenCredentials;
 import io.swagger.model.users.UserCredentials;
+import io.swagger.model.watchlist.WatchlistCreateRequest;
 import io.swagger.repository.UserRepository;
 import io.swagger.security.JwtService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,6 +28,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-04-02T22:43:09.213512-04:00[America/New_York]")
 @RestController
@@ -81,7 +88,10 @@ public class AuthApiController implements AuthApi {
             Authentication authentication = authManager.authenticate(authInputToken);
             String token = jwtService.generateToken(authentication);
 
-            return ResponseEntity.ok().body(new TokenCredentials().accessToken(token));
+            TokenCredentials tokenCredentials = new TokenCredentials().accessToken(token);
+            tokenCredentials.add(linkTo(methodOn(MediaApiController.class).mediaGet("Movies")).withRel("search-movies"));
+            tokenCredentials.add(linkTo(methodOn(WatchlistApiController.class).watchlistPost(new WatchlistCreateRequest())).withRel("create-watchlist"));
+            return ResponseEntity.ok().body(tokenCredentials);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity("Invalid email or password", HttpStatus.UNAUTHORIZED);
@@ -90,13 +100,15 @@ public class AuthApiController implements AuthApi {
     }
 
     @Override
-    public ResponseEntity<Void> userRegistration(@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody UserCredentials userCredentials) {
+    public ResponseEntity userRegistration(@Parameter(in = ParameterIn.DEFAULT, description = "", schema=@Schema()) @Valid @RequestBody UserCredentials userCredentials) {
         if (userRepository.findByEmail(userCredentials.getEmail()).isEmpty()) {
             User user = new User();
             user.setEmail(userCredentials.getEmail());
             user.setPassword(passwordEncoder.encode(userCredentials.getPassword()));
             userRepository.save(user);
-            return ResponseEntity.ok().build();
+            RepresentationModel representationModel = new RepresentationModel();
+            representationModel.add(linkTo(methodOn(AuthApiController.class).authTokenPost()).withRel("generate-token"));
+            return ResponseEntity.ok().body(representationModel);
         } else {
             return new ResponseEntity("Email already has been registered and cannot be modified", HttpStatus.CONFLICT);
         }
