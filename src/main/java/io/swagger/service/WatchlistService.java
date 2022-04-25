@@ -68,7 +68,7 @@ public class WatchlistService {
         }
 
         // return final state of the watchlist
-        return GetWatchlistById(savedEntity.getId());
+        return GetWatchlistById(savedEntity.getId(), true /*readOnlyAccess*/);
     }
 
     private void ValidateWatchlistCreateRequest(WatchlistCreateRequest watchlist)
@@ -89,23 +89,8 @@ public class WatchlistService {
         }
     }
 
-    public Watchlist GetWatchlistById(UUID id) {
-        Optional<WatchlistEntity> entity = watchlistRepository.findById(id);
-        if (!entity.isPresent()) {
-            throw new NotFoundException(404, "WatchlistId not found: " + id.toString());
-        }
-
-        WatchlistEntity watchlistEntity = entity.get();
-        if (!watchlistEntity.getIsPubliclyViewable()) {
-            // if not a public watchlist, validate calling user
-            UserDetails owningUser = movieUserDetailsService.loadUserById(watchlistEntity.getOwnerUserId());
-            String callingUser =  SecurityContextHolder.getContext().getAuthentication().getName();
-
-            if (!owningUser.getUsername().equals(callingUser)) {
-                // calling user does not have permission to view this watchlist
-                throw new NotFoundException(404, "WatchlistId not found: " + id.toString());
-            }
-        }
+    public Watchlist GetWatchlistById(UUID id, boolean readOnlyAccess) {
+        WatchlistEntity watchlistEntity = ValidateAccessPermission(id, readOnlyAccess);
 
         List<MediaItem> mediaItems = new ArrayList<>();
 
@@ -123,6 +108,9 @@ public class WatchlistService {
 
     public void RemoveMediaFromWatchlist(UUID watchlistId, String mediaId)
     {
+        final boolean readOnlyAccess = false; // delete operation is not read-only
+        ValidateAccessPermission(watchlistId, readOnlyAccess);
+
         // Custom delete query did not work. I'm not sure why. This is a work around
         // that should have similar performance
         List<WatchlistMedia> mediaItems = watchlistMediaRepository.findAllByWatchlistId(watchlistId);
@@ -135,13 +123,11 @@ public class WatchlistService {
 
     public Watchlist AddMediaItemToWatchlist(UUID watchlistId, MediaItem mediaItem)
     {
+        final boolean readOnlyAccess = false; // add operation is not read-only
+
         // Verify watchlist and media item exist
-        if (!watchlistRepository.findById(watchlistId).isPresent()) {
-            throw new NotFoundException(404, "Watchlist not found: " + watchlistId);
-        }
-
+        ValidateAccessPermission(watchlistId, readOnlyAccess);
         ValidateMediaItemForInsertion(mediaItem);
-
 
         WatchlistMedia watchlistMedia = new WatchlistMedia();
         watchlistMedia.setWatchlistId(watchlistId);
@@ -166,7 +152,7 @@ public class WatchlistService {
         watchlistMediaRepository.save(watchlistMedia);
 
         // Return new version of the watchlist
-        return GetWatchlistById(watchlistId);
+        return GetWatchlistById(watchlistId, true /*readOnlyAccess*/);
     }
 
     public Watchlist SetWatchlistVisibility(UUID watchlistId, WatchlistVisiblity visibility)
@@ -175,19 +161,14 @@ public class WatchlistService {
             throw new ApiException(400, "isPubliclyViewable parameter not provided");
         }
 
-        Optional<WatchlistEntity> result = watchlistRepository.findById(watchlistId);
-
-        if (!result.isPresent()) {
-            throw new NotFoundException(404, "WatchlistId not found: " + watchlistId.toString());
-        }
-
-        WatchlistEntity entity = result.get();
+        final boolean readOnlyAccess = false; // add operation is not read-only
+        WatchlistEntity entity = ValidateAccessPermission(watchlistId, readOnlyAccess);
         entity.setIsPubliclyViewable(visibility.isIsPubliclyViewable());
 
         watchlistRepository.save(entity);
 
         // return latest version of watchlist
-        return GetWatchlistById(entity.getId());
+        return GetWatchlistById(entity.getId(), true /*readOnlyAccess*/);
     }
 
     private void ValidateMediaItemForInsertion(MediaItem mediaItem)
@@ -208,7 +189,32 @@ public class WatchlistService {
         else if (name != null && name.isEmpty()) {
             throw new ApiException(400, "Name is empty");
         }
+    }
 
+    private WatchlistEntity ValidateAccessPermission(UUID id, boolean readOnlyAccess)
+    {
+        Optional<WatchlistEntity> entity = watchlistRepository.findById(id);
+        if (!entity.isPresent()) {
+            throw new NotFoundException(404, "WatchlistId not found: " + id.toString());
+        }
+
+        WatchlistEntity watchlistEntity = entity.get();
+        UserDetails owningUser = movieUserDetailsService.loadUserById(watchlistEntity.getOwnerUserId());
+        String callingUser =  SecurityContextHolder.getContext().getAuthentication().getName();
+
+        boolean callerIsOwningUser = owningUser.getUsername().equals(callingUser);
+        if (!callerIsOwningUser) {
+            if (!watchlistEntity.getIsPubliclyViewable()) {
+                // non-owning user may not view a private watchlist
+                throw new NotFoundException(404, "WatchlistId not found: " + id.toString());
+            }
+            else if (!readOnlyAccess) {
+                // non-owning user wants to edit this watchlist
+                throw new ApiException(403, "Calling user may not edit a Watchlist they do not own");
+            }
+        }
+
+        return watchlistEntity;
     }
 
     private WatchlistEntity ConvertWatchlistToEntity(Watchlist watchlist) {
