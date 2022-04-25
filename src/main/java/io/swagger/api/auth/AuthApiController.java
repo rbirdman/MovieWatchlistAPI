@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -86,9 +87,10 @@ public class AuthApiController implements AuthApi {
                     userCredentials.getPassword());
 
             Authentication authentication = authManager.authenticate(authInputToken);
+            Optional<User> user = userRepository.findByEmail(userCredentials.getEmail());
             String token = jwtService.generateToken(authentication);
 
-            TokenCredentials tokenCredentials = new TokenCredentials().accessToken(token);
+            TokenCredentials tokenCredentials = new TokenCredentials().accessToken(token).userId(user.get().getId());
             tokenCredentials.add(linkTo(methodOn(MediaApiController.class).mediaGet("Movies")).withRel("search-movies"));
             tokenCredentials.add(linkTo(methodOn(WatchlistApiController.class).watchlistPost(new WatchlistCreateRequest())).withRel("create-watchlist"));
             return ResponseEntity.ok().body(tokenCredentials);
