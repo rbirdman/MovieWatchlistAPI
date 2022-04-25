@@ -55,7 +55,8 @@ public class WatchlistApiController implements WatchlistApi {
     }
 
     public ResponseEntity<Watchlist> watchlistWatchlistIdGet(@Parameter(in = ParameterIn.PATH, description = "The id of the watchlist to retrieve", required=true, schema=@Schema()) @PathVariable("watchlist_id") UUID watchlistId) {
-        Watchlist watchlist = watchlistService.GetWatchlistById(watchlistId);
+        final boolean readOnlyAccess = true;
+        Watchlist watchlist = watchlistService.GetWatchlistById(watchlistId, readOnlyAccess);
 
         if (watchlist == null) {
             return ResponseEntity.notFound().build();
