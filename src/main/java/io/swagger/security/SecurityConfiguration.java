@@ -5,6 +5,7 @@ import io.swagger.service.MovieUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -41,6 +42,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/auth/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/watchlist/**").permitAll() // this api self authorizes
                 .antMatchers("/users/**").hasAuthority("ROLE_ADMIN")
                 .antMatchers("/media/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
                 .antMatchers("/watchlist/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
