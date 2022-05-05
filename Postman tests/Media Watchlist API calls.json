@@ -206,7 +206,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{url}}:{{port}}/MovieWatchlistAPI/1.0.0/media?query=tt0461770",
+					"raw": "{{url}}:{{port}}/MovieWatchlistAPI/1.0.0/media?query=Game of Thrones",
 					"host": [
 						"{{url}}"
 					],
@@ -219,7 +219,7 @@
 					"query": [
 						{
 							"key": "query",
-							"value": "tt0461770"
+							"value": "Game of Thrones"
 						}
 					]
 				}
@@ -500,6 +500,56 @@
 					{
 						"key": "Accept",
 						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "{{url}}:{{port}}/MovieWatchlistAPI/1.0.0/watchlist/{{lastCreatedWatchlistId}}",
+					"host": [
+						"{{url}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"MovieWatchlistAPI",
+						"1.0.0",
+						"watchlist",
+						"{{lastCreatedWatchlistId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Watchlist XML",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{authToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/xml",
 						"type": "default"
 					}
 				],
