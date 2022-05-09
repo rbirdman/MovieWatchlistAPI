@@ -133,6 +133,74 @@
 			"response": []
 		},
 		{
+			"name": "Get Users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"rbird5 expected index\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    found = false;",
+							"",
+							"    pm.expect(jsonData).to.be.an(\"array\");",
+							"    for (let i = 0; i < jsonData.length; i++) {",
+							"        user = jsonData[i];",
+							"        pm.expect(user).to.have.property(\"email\");",
+							"",
+							"        if (user.email == \"rbird5@jh.edu\") {",
+							"            pm.environment.set(\"rbirdUserId\", user.id);",
+							"            found = true;",
+							"        }",
+							"    }",
+							"",
+							"    pm.expect(found).eql(true);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{authToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "{{url}}:{{port}}/MovieWatchlistAPI/1.0.0/users",
+					"host": [
+						"{{url}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"MovieWatchlistAPI",
+						"1.0.0",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Get Media By Id",
 			"event": [
 				{
@@ -344,74 +412,6 @@
 						"1.0.0",
 						"media",
 						"tt0461770"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Users",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test(\"rbird5 expected index\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    found = false;",
-							"",
-							"    pm.expect(jsonData).to.be.an(\"array\");",
-							"    for (let i = 0; i < jsonData.length; i++) {",
-							"        user = jsonData[i];",
-							"        pm.expect(user).to.have.property(\"email\");",
-							"",
-							"        if (user.email == \"rbird5@jh.edu\") {",
-							"            pm.environment.set(\"rbirdUserId\", user.id);",
-							"            found = true;",
-							"        }",
-							"    }",
-							"",
-							"    pm.expect(found).eql(true);",
-							"});",
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{authToken}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/json",
-						"type": "default"
-					}
-				],
-				"url": {
-					"raw": "{{url}}:{{port}}/MovieWatchlistAPI/1.0.0/users",
-					"host": [
-						"{{url}}"
-					],
-					"port": "{{port}}",
-					"path": [
-						"MovieWatchlistAPI",
-						"1.0.0",
-						"users"
 					]
 				}
 			},
